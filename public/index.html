@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>La Bola Negra</title>
+  <meta name="description" content="Una pregunta al día para toda España. Bola blanca o bola negra. Un voto por persona.">
+  <meta name="author" content="Marodseg - Manuel Ángel Rodríguez Segura">
+  <meta name="theme-color" content="#0c0a09">
+  <meta property="og:title" content="La Bola Negra">
+  <meta property="og:description" content="Una pregunta al día para toda España. ¿Bola blanca o bola negra?">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="spotlight" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="logo" href="/" aria-label="La Bola Negra, inicio">
+      <span class="logo-ball" aria-hidden="true"></span>
+      <span>La Bola <em>Negra</em></span>
+    </a>
+    <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true" aria-label="Sonido">
+      <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="today" aria-labelledby="question">
+      <p class="meta" id="meta">&nbsp;</p>
+      <h1 class="question" id="question">Preparando la urna…</h1>
+
+      <div class="stage">
+        <canvas class="urn" id="urn" aria-label="Urna de votación" role="img"></canvas>
+      </div>
+
+      <div class="vote" id="vote" hidden>
+        <div class="tray" role="group" aria-label="Elige tu bola">
+          <div class="slot">
+            <button class="ball ball--blanca" type="button" data-ball="blanca" aria-label="Echar bola blanca: sí"></button>
+            <span class="slot-label"><strong>Blanca</strong> Sí</span>
+          </div>
+          <div class="slot">
+            <button class="ball ball--negra" type="button" data-ball="negra" aria-label="Echar bola negra: no"></button>
+            <span class="slot-label"><strong>Negra</strong> No</span>
+          </div>
+        </div>
+        <p class="hint" id="hint">Arrastra tu bola hasta la urna, o tócala dos veces.</p>
+      </div>
+
+      <div class="results" id="results" hidden aria-live="polite">
+        <p class="verdict" id="verdict"></p>
+        <div class="tally">
+          <div class="side side--blanca">
+            <span class="mini mini--blanca" aria-hidden="true"></span>
+            <span class="pct" id="pct-blanca">0%</span>
+            <span class="count"><b id="count-blanca">0</b> bolas blancas</span>
+          </div>
+          <div class="side side--negra">
+            <span class="mini mini--negra" aria-hidden="true"></span>
+            <span class="pct" id="pct-negra">0%</span>
+            <span class="count"><b id="count-negra">0</b> bolas negras</span>
+          </div>
+        </div>
+        <div class="bar" aria-hidden="true"><span class="bar-blanca" id="bar-blanca"></span><span class="bar-negra" id="bar-negra"></span></div>
+        <p class="fine" id="fine"></p>
+        <div class="actions">
+          <button class="btn" id="share" type="button">Compartir la pregunta</button>
+        </div>
+        <p class="next">Próxima pregunta en <time id="countdown">--:--:--</time></p>
+      </div>
+    </section>
+
+    <section class="archive" aria-labelledby="archive-title">
+      <h2 id="archive-title">Votaciones anteriores</h2>
+      <ol class="archive-list" id="archive"></ol>
+    </section>
+
+    <section class="how" aria-labelledby="how-title">
+      <h2 id="how-title">Cómo funciona</h2>
+      <ol class="steps">
+        <li><span class="step-n">1</span><p><strong>Una pregunta al día.</strong> A medianoche (hora peninsular) la urna se vacía y llega una pregunta nueva para toda España.</p></li>
+        <li><span class="step-n">2</span><p><strong>Echa tu bola.</strong> Blanca es sí, negra es no. Solo puedes votar una vez por pregunta y no hay vuelta atrás.</p></li>
+        <li><span class="step-n">3</span><p><strong>La urna es secreta.</strong> No verás cómo va la votación hasta que eches tu bola. Así nadie se deja influir.</p></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Voto anónimo · No es una encuesta científica</p>
+    <p>Hecho por <strong>Marodseg</strong> · Manuel Ángel Rodríguez Segura</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/vendor/matter.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

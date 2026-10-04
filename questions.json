@@ -1,0 +1,379 @@
+{
+  "start": "2026-10-04",
+  "fixed": {
+    "2026-12-24": {
+      "text": "¿Debería ser festiva la tarde de Nochebuena para todo el mundo?",
+      "tag": "Navidad"
+    },
+    "2026-12-31": {
+      "text": "¿Ha sido 2026 un buen año para España?",
+      "tag": "Fin de año"
+    },
+    "2027-01-06": {
+      "text": "¿Es mejor que los regalos los traigan los Reyes Magos que Papá Noel?",
+      "tag": "Tradiciones"
+    }
+  },
+  "pool": [
+    {
+      "text": "¿Debería prohibirse el móvil en los colegios durante toda la jornada?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Tortilla de patatas con cebolla?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Debería España quedarse para siempre en el horario de verano?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Sería buena idea la semana laboral de cuatro días?",
+      "tag": "Trabajo"
+    },
+    {
+      "text": "¿Deberían las redes sociales estar prohibidas para menores de 16 años?",
+      "tag": "Tecnología"
+    },
+    {
+      "text": "¿La siesta debería ser un derecho reconocido en el trabajo?",
+      "tag": "Trabajo"
+    },
+    {
+      "text": "¿Es la paella con chorizo un crimen?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían ser gratuitos el tren de cercanías y el autobús urbano para todo el mundo?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Deberían prohibirse las corridas de toros?",
+      "tag": "Cultura"
+    },
+    {
+      "text": "¿Es mejor vivir en un pueblo que en una gran ciudad?",
+      "tag": "Vida"
+    },
+    {
+      "text": "¿Debería el voto ser obligatorio en las elecciones?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Deberían los videojuegos considerarse deporte olímpico?",
+      "tag": "Deporte"
+    },
+    {
+      "text": "¿Está justificado subir el precio del aceite de oliva para pagar mejor al agricultor?",
+      "tag": "Economía"
+    },
+    {
+      "text": "¿Debería limitarse por ley el precio del alquiler en las grandes ciudades?",
+      "tag": "Vivienda"
+    },
+    {
+      "text": "¿Deberían cerrar los bares a la una de la madrugada como tarde?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Es el VAR bueno para el fútbol?",
+      "tag": "Deporte"
+    },
+    {
+      "text": "¿Deberían eliminarse los deberes en primaria?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Te fiarías de un coche que conduce solo?",
+      "tag": "Tecnología"
+    },
+    {
+      "text": "¿Debería prohibirse fumar también en las terrazas?",
+      "tag": "Salud"
+    },
+    {
+      "text": "¿Hay que cambiar la cena española a una hora más temprana?",
+      "tag": "Vida"
+    },
+    {
+      "text": "¿Deberían los pisos turísticos estar prohibidos en el centro de las ciudades?",
+      "tag": "Vivienda"
+    },
+    {
+      "text": "¿Es la Inteligencia Artificial más una oportunidad que una amenaza?",
+      "tag": "Tecnología"
+    },
+    {
+      "text": "¿Debería la Selección jugar sus partidos rotando por todas las comunidades?",
+      "tag": "Deporte"
+    },
+    {
+      "text": "¿Deberían las mascotas poder entrar en restaurantes y tiendas?",
+      "tag": "Vida"
+    },
+    {
+      "text": "¿Debería el teletrabajo ser un derecho siempre que el puesto lo permita?",
+      "tag": "Trabajo"
+    },
+    {
+      "text": "¿Es la Navidad demasiado consumista?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Consigues comerte las doce uvas a tiempo cada Nochevieja?",
+      "tag": "Tradiciones"
+    },
+    {
+      "text": "¿Debería existir un servicio civil obligatorio para los jóvenes?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Sería buena idea un impuesto a la comida ultraprocesada?",
+      "tag": "Salud"
+    },
+    {
+      "text": "¿Pagarías más por un producto si es fabricado en España?",
+      "tag": "Economía"
+    },
+    {
+      "text": "¿Deberían los políticos tener un sueldo máximo igual al de un médico de la sanidad pública?",
+      "tag": "Política"
+    },
+    {
+      "text": "¿El café de bar en España debería costar más de 1,50 €?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían prohibirse los coches en el centro de todas las ciudades de más de 100.000 habitantes?",
+      "tag": "Ciudad"
+    },
+    {
+      "text": "¿Es mejor el verano que el invierno?",
+      "tag": "Vida"
+    },
+    {
+      "text": "¿Deberían las universidades públicas ser totalmente gratuitas?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Debería ser obligatorio aprender a nadar en el colegio?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Usar Bizum entre amigos para pagar un café es de rácanos?",
+      "tag": "Vida"
+    },
+    {
+      "text": "¿Deberían eliminarse los peajes en todas las autopistas?",
+      "tag": "Transporte"
+    },
+    {
+      "text": "¿Debería prohibirse la publicidad de casas de apuestas?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Merece la pena ir al Mundial de fútbol en persona?",
+      "tag": "Deporte"
+    },
+    {
+      "text": "¿Es aceptable echar piña a la pizza?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los menores de 14 años no tener smartphone propio?",
+      "tag": "Tecnología"
+    },
+    {
+      "text": "¿Debería haber más días festivos y menos puentes?",
+      "tag": "Trabajo"
+    },
+    {
+      "text": "¿Es Eurovisión algo que todavía merece la pena?",
+      "tag": "Cultura"
+    },
+    {
+      "text": "¿Deberíamos volver a los exámenes de reválida al final del instituto?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Hay que reducir la velocidad máxima en autovía a 110 km/h?",
+      "tag": "Transporte"
+    },
+    {
+      "text": "¿Debería el castellano y el inglés tener el mismo peso en la escuela?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Te gustaría que se pudiera votar desde el móvil en las elecciones?",
+      "tag": "Tecnología"
+    },
+    {
+      "text": "¿Debería ser legal el cannabis para uso recreativo?",
+      "tag": "Salud"
+    },
+    {
+      "text": "¿Debería haber un tope de horas al día para usar el móvil en el trabajo?",
+      "tag": "Trabajo"
+    },
+    {
+      "text": "¿Es la tauromaquia patrimonio cultural que hay que proteger?",
+      "tag": "Cultura"
+    },
+    {
+      "text": "¿Debería el jamón ibérico tener precio máximo en Navidad?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían cerrarse las centrales nucleares?",
+      "tag": "Energía"
+    },
+    {
+      "text": "¿Pondrías placas solares en tu casa si te las subvencionaran al 50 %?",
+      "tag": "Energía"
+    },
+    {
+      "text": "¿Es razonable jubilarse a los 67 años?",
+      "tag": "Trabajo"
+    },
+    {
+      "text": "¿Deberían las vacaciones escolares de verano ser más cortas?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Hay que cobrar por entrar a los centros históricos de ciudades muy turísticas?",
+      "tag": "Turismo"
+    },
+    {
+      "text": "¿Es el turismo masivo un problema para España?",
+      "tag": "Turismo"
+    },
+    {
+      "text": "¿Debería prohibirse dar propina?",
+      "tag": "Vida"
+    },
+    {
+      "text": "¿El gazpacho es mejor que el salmorejo?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los partidos de fútbol jugarse antes de las 21:00?",
+      "tag": "Deporte"
+    },
+    {
+      "text": "¿Debería ser obligatoria la educación financiera en el instituto?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Te irías a vivir a otro país si te ofrecieran el doble de sueldo?",
+      "tag": "Vida"
+    },
+    {
+      "text": "¿Es mejor la tortilla poco hecha?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían las empresas publicar el sueldo en todas las ofertas de empleo?",
+      "tag": "Trabajo"
+    },
+    {
+      "text": "¿Se debería poder elegir el apellido que va primero sin restricciones?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Hay que prohibir los fuegos artificiales por el ruido y los animales?",
+      "tag": "Tradiciones"
+    },
+    {
+      "text": "¿Debería España tener un tren de alta velocidad que llegue a todas las capitales de provincia?",
+      "tag": "Transporte"
+    },
+    {
+      "text": "¿Es la monarquía útil para España hoy en día?",
+      "tag": "Política"
+    },
+    {
+      "text": "¿Debería el Estado poner límite al precio de la luz?",
+      "tag": "Energía"
+    },
+    {
+      "text": "¿Deberían eliminarse los exámenes y evaluarse solo con trabajos?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Es el reguetón buena música?",
+      "tag": "Cultura"
+    },
+    {
+      "text": "¿Debería prohibirse el patinete eléctrico en las aceras con multas duras?",
+      "tag": "Ciudad"
+    },
+    {
+      "text": "¿Se debería poder abrir las tiendas los domingos libremente?",
+      "tag": "Economía"
+    },
+    {
+      "text": "¿Es la Semana Santa más una tradición cultural que religiosa?",
+      "tag": "Tradiciones"
+    },
+    {
+      "text": "¿Es mejor el Cola Cao que el Nesquik?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Debería la sanidad pública cubrir el dentista para todos?",
+      "tag": "Salud"
+    },
+    {
+      "text": "¿Debería ser delito tirar comida en supermercados y restaurantes?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Deberían rebajar la edad para votar a los 16 años?",
+      "tag": "Política"
+    },
+    {
+      "text": "¿Hay que obligar a los nuevos edificios a tener jardines en la azotea?",
+      "tag": "Ciudad"
+    },
+    {
+      "text": "¿Te has arrepentido alguna vez de haber votado lo que votaste?",
+      "tag": "Política"
+    },
+    {
+      "text": "¿Debería ser obligatorio el uso de casco para ir en bici por la ciudad?",
+      "tag": "Transporte"
+    },
+    {
+      "text": "¿El queso manchego es el mejor queso de España?",
+      "tag": "Gastronomía"
+    },
+    {
+      "text": "¿Debería existir una renta básica universal?",
+      "tag": "Economía"
+    },
+    {
+      "text": "¿Debería prohibirse el plástico de un solo uso por completo?",
+      "tag": "Medio ambiente"
+    },
+    {
+      "text": "¿Merece la pena tener coche en una gran ciudad?",
+      "tag": "Ciudad"
+    },
+    {
+      "text": "¿Se debería volver a la mili obligatoria?",
+      "tag": "Sociedad"
+    },
+    {
+      "text": "¿Es la tele en abierto todavía relevante?",
+      "tag": "Cultura"
+    },
+    {
+      "text": "¿Debería haber cámaras en todas las aulas?",
+      "tag": "Educación"
+    },
+    {
+      "text": "¿Crees que tus hijos vivirán mejor que tú?",
+      "tag": "Sociedad"
+    }
+  ]
+}

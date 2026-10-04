@@ -1,0 +1,22 @@
+{
+  "name": "la-bola-negra",
+  "version": "1.0.0",
+  "description": "Una pregunta al día para toda España. Bola blanca o bola negra. Un voto por persona.",
+  "main": "server.js",
+  "type": "module",
+  "private": true,
+  "author": "Marodseg - Manuel Ángel Rodríguez Segura <manuelangelrodriguezsegura@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "express": "^4.22.3",
+    "matter-js": "^0.20.0"
+  }
+}
