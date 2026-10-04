@@ -108,10 +108,17 @@ describe('votación', () => {
   test('exige Turnstile cuando está configurado', async () => {
     env.TURNSTILE_SECRET = 'secreto';
     const realFetch = globalThis.fetch;
-    globalThis.fetch = async (_url, opts) => new Response(JSON.stringify({ success: opts.body.get('response') === 'ok' }));
+    globalThis.fetch = async (_url, opts) => {
+      const ok = opts.body.get('response') === 'ok';
+      return new Response(JSON.stringify({ success: ok, 'error-codes': ok ? [] : ['invalid-input-response'] }));
+    };
     try {
-      assert.equal((await call('POST', '/api/votar', { voter: A, body: { ball: 'blanca' } })).status, 403);
-      assert.equal((await call('POST', '/api/votar', { voter: A, body: { ball: 'blanca', turnstileToken: 'mal' } })).status, 403);
+      const sinToken = await call('POST', '/api/votar', { voter: A, body: { ball: 'blanca' } });
+      assert.equal(sinToken.status, 403);
+      assert.equal(sinToken.data.detalle, 'sin-token');
+      const malo = await call('POST', '/api/votar', { voter: A, body: { ball: 'blanca', turnstileToken: 'mal' } });
+      assert.equal(malo.status, 403);
+      assert.equal(malo.data.detalle, 'invalid-input-response');
       assert.equal((await call('POST', '/api/votar', { voter: A, body: { ball: 'blanca', turnstileToken: 'ok' } })).status, 201);
     } finally {
       globalThis.fetch = realFetch;

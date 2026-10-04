@@ -6,7 +6,7 @@ import { $, h, reducedMotion, toast, wait } from './lib/dom.js';
 import { fmt, formatLongDate, formatShortDate, percents, percentText, plural, verdict, VERDICT_LABEL } from './lib/format.js';
 import { clack, setSoundEnabled, thump, unlockSound } from './lib/sound.js';
 import { store } from './lib/store.js';
-import { resetTurnstile, setupTurnstile, turnstileToken } from './lib/turnstile.js';
+import { resetTurnstile, setupTurnstile, turnstileActive, turnstileError, turnstileToken } from './lib/turnstile.js';
 import { MAX_BALLS } from './urn/constants.js';
 import { actaRow, BALL_NAME } from './lib/actas.js';
 
@@ -301,9 +301,35 @@ function returnHome(clone, ball) {
   };
 }
 
+const VERIFY_HINT = 'Antes de votar, marque la casilla de abajo para confirmar que no es un robot.';
+
+/** Pide la comprobación anti-robots cuando Turnstile no la ha resuelto solo. */
+function askVerification() {
+  const box = $('verificacion');
+  const err = turnstileError();
+  box.classList.add('attention');
+  box.scrollIntoView({ block: 'center', behavior: reducedMotion ? 'auto' : 'smooth' });
+  setHint(err
+    ? `No se ha podido hacer la comprobación anti-robots (código ${err}). Recargue la página e inténtelo de nuevo.`
+    : VERIFY_HINT);
+}
+
 async function castBall(ball, existingClone = null) {
   if (state.busy) return;
   state.busy = true;
+
+  // Sin comprobación anti-robots resuelta no se lanza la bola: se pide antes.
+  let verification = null;
+  if (turnstileActive()) {
+    verification = await turnstileToken(2500);
+    if (!verification) {
+      if (existingClone) returnHome(existingClone, ball);
+      disarm();
+      askVerification();
+      state.busy = false;
+      return;
+    }
+  }
   // En móvil la urna puede quedar fuera de la pantalla: primero se acerca, para ver caer la bola.
   if (!existingClone) {
     const r = stage.getBoundingClientRect();
@@ -318,14 +344,12 @@ async function castBall(ball, existingClone = null) {
   plates.classList.add('disabled');
   setHint('Su bola cae en la urna…');
 
-  const tokenPromise = turnstileToken();
   await flyToUrn(clone);
   clone.el.remove();
   urn.drop(color, { mine: true });
 
-  const turnstileTokenValue = await tokenPromise;
   const [res] = await Promise.all([
-    api('/api/votar', { method: 'POST', body: { ball: color, day: state.day, turnstileToken: turnstileTokenValue ?? undefined } }),
+    api('/api/votar', { method: 'POST', body: { ball: color, day: state.day, turnstileToken: verification ?? undefined } }),
     wait(reducedMotion ? 300 : 1400),
   ]);
   resetTurnstile();
@@ -347,7 +371,7 @@ async function castBall(ball, existingClone = null) {
   }
 
   // El voto no ha entrado: la bola vuelve a la mano.
-  toast(res.data.error ?? 'No se ha podido registrar su voto.');
+  toast(res.data.detalle ? `${res.data.error} (código ${res.data.detalle})` : (res.data.error ?? 'No se ha podido registrar su voto.'));
   urn.removeMine();
   ball.classList.remove('gone');
   plates.classList.remove('disabled');
@@ -518,7 +542,18 @@ async function init() {
   } else {
     $('ballot').hidden = false;
     setupBallot();
-    setupTurnstile(data.turnstileSiteKey, $('turnstile'));
+    setupTurnstile(data.turnstileSiteKey, $('verificacion'), {
+      onInteractive() {
+        $('verificacion').classList.add('attention');
+        setHint(VERIFY_HINT);
+      },
+      onStatus({ token }) {
+        if (token && $('hint').textContent === VERIFY_HINT) {
+          $('verificacion').classList.remove('attention');
+          setHint('Comprobación hecha. Ya puede depositar su bola.');
+        }
+      },
+    });
   }
   loadActas();
 }

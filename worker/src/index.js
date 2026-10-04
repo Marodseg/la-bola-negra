@@ -70,8 +70,11 @@ const routes = {
     if (previous) return error(409, 'Ya se ha votado hoy desde este dispositivo.', { myBall: previous, results: await tally(env.DB, day) });
 
     const ip = clientIp(request);
-    if (!(await verifyTurnstile(env, body.turnstileToken, ip))) {
-      return error(403, 'No hemos podido comprobar que no eres un robot. Recarga e inténtalo de nuevo.');
+    const check = await verifyTurnstile(env, body.turnstileToken, ip);
+    if (!check.ok) {
+      return error(403, 'No hemos podido comprobar que no es un robot. Recargue la página e inténtelo de nuevo.', {
+        detalle: check.codes.join(',') || undefined,
+      });
     }
 
     const ipHash = await hmac(env.HASH_SECRET, `ip:${day}:${ip}`, 22);

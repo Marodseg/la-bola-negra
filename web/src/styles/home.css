@@ -188,6 +188,7 @@
 
 .turnstile { display: flex; justify-content: center; margin-top: 12px; }
 .turnstile:empty { display: none; }
+.turnstile.attention { padding: 10px; outline: 2px dashed var(--red); outline-offset: 2px; }
 
 /* ---------- Acta de escrutinio ---------- */
 
