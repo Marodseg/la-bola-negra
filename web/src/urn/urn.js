@@ -497,9 +497,9 @@ export function createUrn(container, { onImpact, onReady } = {}) {
   // vuelve sola al frente, para que siempre se pueda apuntar a la boca.
   const BASE_YAW = -0.32;
   const BASE_PITCH = 0.3;
-  const YAW_LIMIT = 1.45; // unos 83° a cada lado: el cristal nunca queda de espaldas
+  const YAW_LIMIT = 0.95; // unos 55° a cada lado: el cristal siempre se ve
   const PITCH_MIN = 0.04;
-  const PITCH_MAX = 0.9;
+  const PITCH_MAX = 0.75;
   const RETURN_AFTER = 6000;
   const orbit = { yaw: 0, pitch: 0, vYaw: 0, vPitch: 0, drag: null, touchedAt: -Infinity };
   const canvas = renderer.domElement;
@@ -519,8 +519,8 @@ export function createUrn(container, { onImpact, onReady } = {}) {
     const dy = e.clientY - d.y;
     d.x = e.clientX;
     d.y = e.clientY;
-    orbit.vYaw = -dx * 0.0075;
-    orbit.vPitch = dy * 0.005;
+    orbit.vYaw = -dx * 0.0045;
+    orbit.vPitch = dy * 0.0035;
     orbit.yaw += orbit.vYaw;
     orbit.pitch += orbit.vPitch;
     orbit.touchedAt = performance.now();
@@ -653,7 +653,10 @@ export function createUrn(container, { onImpact, onReady } = {}) {
     placeCamera(t);
     if (mine && openedAt >= 0 && t > openedAt) {
       mark.position.copy(mine.body.position);
-      mark.material.opacity = Math.min(1, (t - openedAt) / 500);
+      // Se desvanece si la urna está tan girada que la bola quedaría detrás de la madera.
+      const sideways = Math.abs(BASE_YAW + orbit.yaw);
+      const facing = Math.min(1, Math.max(0, (0.85 - sideways) / 0.25));
+      mark.material.opacity = Math.min(1, (t - openedAt) / 500) * facing;
     } else {
       mark.material.opacity = 0;
     }
