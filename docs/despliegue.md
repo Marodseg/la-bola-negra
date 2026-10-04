@@ -13,60 +13,46 @@ Una vez configurado, cada `git push` a `main` despliega solo lo que haya cambiad
 
 ---
 
-## 1. Cuenta de Cloudflare y base de datos
+## 1. Base de datos
 
-1. Crea una cuenta gratuita en [dash.cloudflare.com](https://dash.cloudflare.com/sign-up).
-2. En tu ordenador, dentro del proyecto:
+La base de datos D1 `la-bola-negra` ya está creada (en Europa occidental) y su identificador está en `worker/wrangler.toml`. Las tablas las crea el propio flujo de despliegue con las migraciones de `worker/migrations/`.
 
-   ```bash
-   npm install
-   npx wrangler login
-   npx wrangler d1 create la-bola-negra
-   ```
+Si algún día quieres usar otra base de datos, créala con `npx wrangler d1 create la-bola-negra` y cambia el `database_id` (o define el secreto `D1_DATABASE_ID`).
 
-3. Apunta el `database_id` que imprime el último comando.
-4. Apunta también tu **Account ID**: aparece en la barra lateral del panel de Cloudflare, en *Workers & Pages*.
+## 2. Subdominio workers.dev
 
-## 2. Token de API de Cloudflare
+Si la cuenta de Cloudflare es nueva, entra una vez en **Workers & Pages** en el panel y acepta el subdominio `*.workers.dev` que te propone. Sin él no se puede publicar ningún Worker.
+
+## 3. Token de API de Cloudflare
 
 En [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens) → **Create Token** → plantilla **Edit Cloudflare Workers**. Añade también el permiso **Account · D1 · Edit**. Guarda el token: solo se muestra una vez.
 
-## 3. Secretos en GitHub
+Tu **Account ID** aparece en la página principal de **Workers & Pages**, en la columna de la derecha.
+
+## 4. Secretos en GitHub
 
 En el repositorio: **Settings → Secrets and variables → Actions → New repository secret**.
 
 | Secreto | Valor |
 | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | El token del paso 2 |
+| `CLOUDFLARE_API_TOKEN` | El token del paso 3 |
 | `CLOUDFLARE_ACCOUNT_ID` | Tu Account ID |
-| `D1_DATABASE_ID` | El `database_id` del paso 1 |
 | `HASH_SECRET` | Un texto largo y aleatorio, por ejemplo la salida de `openssl rand -hex 32`. **No lo cambies después**: si cambia, nadie puede comprobar si ya votó hoy |
 
-## 4. Desplegar la API
-
-En la pestaña **Actions** → **Desplegar API (Cloudflare Workers)** → **Run workflow**.
-
-El flujo aplica las migraciones de la base de datos, publica el Worker y sube los secretos. Al terminar, la API queda en:
-
-```
-https://la-bola-negra-api.<tu-subdominio>.workers.dev
-```
-
-(el subdominio aparece en el registro del paso «Desplegar» y en el panel de Cloudflare). Compruébalo abriendo `…/api/salud`: tiene que responder `{"ok":true}`.
-
-## 5. Publicar la web en GitHub Pages
+## 5. Activar GitHub Pages y desplegar
 
 1. **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-2. **Settings → Secrets and variables → Actions → Variables → New repository variable**:
+2. **Actions → Desplegar API (Cloudflare Workers) → Run workflow**.
 
-   | Variable | Valor |
-   | --- | --- |
-   | `API_URL` | La URL del Worker del paso 4, sin barra final |
-   | `SITE_URL` | `https://marodseg.github.io/la-bola-negra` |
+El flujo crea las tablas, publica la API, sube los secretos y, al terminar, vuelve a publicar la web con la dirección de la API dentro. La dirección de la API se calcula sola a partir de tu subdominio de Cloudflare:
 
-3. **Actions → Desplegar web (GitHub Pages) → Run workflow**.
+```
+https://la-bola-negra-api.<tu-subdominio>.workers.dev/api/salud   →   {"ok":true}
+```
 
 La web queda en `https://marodseg.github.io/la-bola-negra/`.
+
+Las variables `API_URL` y `SITE_URL` del repositorio son opcionales: solo hacen falta si cambias de dominio.
 
 ## 6. Protección anti-bots (opcional, recomendado)
 
@@ -91,7 +77,7 @@ y actualiza `SITE_URL`. Vuelve a desplegar API y web.
 
 ## 8. Histórico en el repositorio
 
-El flujo **Guardar histórico** se ejecuta cada noche, descarga todas las actas de la API y las guarda en `historico/historico.csv` y `historico/historico.json`. Así queda una copia pública y versionada aunque algún día desapareciera la base de datos. Solo necesita la variable `API_URL`.
+El flujo **Guardar histórico** se ejecuta cada noche, descarga todas las actas de la API y las guarda en `historico/historico.csv` y `historico/historico.json`. Así queda una copia pública y versionada aunque algún día desapareciera la base de datos. Usa los mismos secretos de Cloudflare para saber dónde está la API.
 
 ---
 

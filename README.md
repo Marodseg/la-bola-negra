@@ -79,7 +79,7 @@ npm run dev        # API en http://127.0.0.1:8787 y web en http://localhost:5173
 
 ## Despliegue
 
-Paso a paso en **[docs/despliegue.md](docs/despliegue.md)**. En resumen: crear la base de datos D1, añadir cuatro secretos al repositorio, activar GitHub Pages y definir dos variables.
+Paso a paso en **[docs/despliegue.md](docs/despliegue.md)**. En resumen: añadir tres secretos al repositorio, activar GitHub Pages y lanzar el flujo «Desplegar API».
 
 ## API
 

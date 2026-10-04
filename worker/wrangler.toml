@@ -22,8 +22,8 @@ TURNSTILE_SITE_KEY = ""
 [[d1_databases]]
 binding = "DB"
 database_name = "la-bola-negra"
-# El flujo de despliegue sustituye este valor por el secreto D1_DATABASE_ID.
-database_id = "00000000-0000-0000-0000-000000000000"
+# Identificador de la base de datos D1 de producción (no es secreto: sin el token de la cuenta no sirve de nada).
+database_id = "2a15a49d-8b61-41a0-af47-25d02726849b"
 migrations_dir = "migrations"
 
 [ai]

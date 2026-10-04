@@ -24,37 +24,47 @@ jobs:
   build:
     runs-on: ubuntu-latest
     outputs:
-      ready: ${{ steps.config.outputs.ready }}
+      ready: ${{ steps.api.outputs.ready }}
     steps:
-      - name: Comprobar configuración
-        id: config
+      - name: Averiguar la URL de la API
+        id: api
         env:
           API_URL: ${{ vars.API_URL }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          # Si no hay variable API_URL, se calcula con el subdominio workers.dev de la cuenta.
+          if [ -z "$API_URL" ] && [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            sub=$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" | jq -r '.result.subdomain // empty') || true
+            [ -n "$sub" ] && API_URL="https://la-bola-negra-api.$sub.workers.dev"
+          fi
           if [ -z "$API_URL" ]; then
-            echo "::warning::Falta la variable del repositorio API_URL (URL del Worker). La web no se publica hasta configurarla (docs/despliegue.md)."
+            echo "::warning::No se conoce la URL de la API (ni variable API_URL ni secretos de Cloudflare). Mira docs/despliegue.md"
             echo "ready=false" >> "$GITHUB_OUTPUT"
           else
+            echo "API: $API_URL"
+            echo "url=${API_URL%/}" >> "$GITHUB_OUTPUT"
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/checkout@v4
-        if: steps.config.outputs.ready == 'true'
+        if: steps.api.outputs.ready == 'true'
       - uses: actions/setup-node@v4
-        if: steps.config.outputs.ready == 'true'
+        if: steps.api.outputs.ready == 'true'
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-        if: steps.config.outputs.ready == 'true'
+        if: steps.api.outputs.ready == 'true'
       - run: npm run build
-        if: steps.config.outputs.ready == 'true'
+        if: steps.api.outputs.ready == 'true'
         env:
-          VITE_API_URL: ${{ vars.API_URL }}
-          VITE_SITE_URL: ${{ vars.SITE_URL }}
+          VITE_API_URL: ${{ steps.api.outputs.url }}
+          VITE_SITE_URL: ${{ vars.SITE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
       - uses: actions/configure-pages@v5
-        if: steps.config.outputs.ready == 'true'
+        if: steps.api.outputs.ready == 'true'
       - uses: actions/upload-pages-artifact@v3
-        if: steps.config.outputs.ready == 'true'
+        if: steps.api.outputs.ready == 'true'
         with:
           path: dist
 
