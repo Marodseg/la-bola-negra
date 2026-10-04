@@ -224,6 +224,10 @@ describe('preguntas', () => {
     const draft = { text: '¿Prefieres la tapas gratuitas con la consumición?', category: 'Gastronomía' };
     const corrige = { AI: fakeAI(() => draft, () => ({ aprobada: true, text: '¿Prefieres las tapas gratis con la consumición?' })) };
     assert.equal((await generateWithAI(corrige, [], { attempts: 1, log: quiet })).text, '¿Prefieres las tapas gratis con la consumición?');
+    const comillas = { AI: fakeAI(() => draft, () => ({ aprobada: true, text: '«¿Prefieres las tapas gratis con la consumición?» ' })) };
+    assert.equal((await generateWithAI(comillas, [], { attempts: 1, log: quiet })).text, '¿Prefieres las tapas gratis con la consumición?');
+    const roto = { AI: fakeAI(() => ({ text: '¿Deberían los museos abrir gratis los domingos por la tarde?', category: 'Cultura' }), () => ({ aprobada: true, text: 'Museos gratis' })) };
+    assert.equal((await generateWithAI(roto, [], { attempts: 1, log: quiet })).text, '¿Deberían los museos abrir gratis los domingos por la tarde?');
     const rechaza = { AI: fakeAI(() => draft, () => ({ aprobada: false, text: '', motivo: 'confusa' })) };
     assert.equal(await generateWithAI(rechaza, [], { attempts: 2, log: quiet }), null);
   });

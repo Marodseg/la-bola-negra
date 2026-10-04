@@ -60,10 +60,14 @@ async function review(env, model, question) {
     response_format: { type: 'json_schema', json_schema: REVIEW_SCHEMA },
   });
   const verdict = parse(out?.response);
-  if (!verdict || verdict.aprobada !== true || typeof verdict.text !== 'string') {
+  if (!verdict || verdict.aprobada !== true) {
     return { ok: false, reason: `revisión: ${verdict?.motivo ?? 'rechazada'}` };
   }
-  return { ok: true, question: { ...question, text: verdict.text } };
+  // El corrector a veces devuelve la pregunta entre comillas o con espacios de más.
+  const text = typeof verdict.text === 'string'
+    ? verdict.text.trim().replace(/^["'«“]+|["'»”]+$/g, '').replace(/\?\s*\.$/, '?').trim()
+    : '';
+  return { ok: true, question: { ...question, text: text || question.text } };
 }
 
 /**
@@ -95,7 +99,14 @@ export async function generateWithAI(env, recentItems, { attempts = 3, log = con
         continue;
       }
       const reviewed = await review(env, model, draft.question);
-      const final = reviewed.ok ? validateQuestion(reviewed.question, recent) : reviewed;
+      if (!reviewed.ok) {
+        log.warn?.(`IA: «${draft.question.text}» descartada (${reviewed.reason})`);
+        continue;
+      }
+      // Si el corrector la aprueba pero su versión no pasa los filtros de formato, vale la original.
+      const corrected = validateQuestion(reviewed.question, recent);
+      if (!corrected.ok) log.warn?.(`IA: la corrección «${reviewed.question.text}» no pasa (${corrected.reason}); se usa la original`);
+      const final = corrected.ok ? corrected : draft;
       if (final.ok) return final.question;
       log.warn?.(`IA: «${draft.question.text}» descartada (${final.reason})`);
     } catch (err) {

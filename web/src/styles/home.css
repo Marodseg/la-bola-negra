@@ -356,6 +356,8 @@
   text-transform: uppercase;
   color: var(--ink);
 }
+.caption-hint { display: none; }
+.stage.ready + .caption .caption-hint { display: block; margin-top: 2px; color: var(--ink-3); }
 .caption-live { display: block; margin-top: 2px; font-variant-numeric: lining-nums; }
 .caption-live b { font-style: normal; }
 

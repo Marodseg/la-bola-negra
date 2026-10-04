@@ -486,17 +486,87 @@ export function createUrn(container, { onImpact, onReady } = {}) {
   }
   new ResizeObserver(resize).observe(container);
 
+  // Paralaje suave con el ratón cuando no se está girando la urna.
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
   window.addEventListener('pointermove', (e) => {
     pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
     pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
   }, { passive: true });
 
+  // Girar la urna arrastrando (ratón o dedo), con inercia. Tras unos segundos sin tocarla
+  // vuelve sola al frente, para que siempre se pueda apuntar a la boca.
+  const BASE_YAW = -0.32;
+  const BASE_PITCH = 0.3;
+  const YAW_LIMIT = 1.45; // unos 83° a cada lado: el cristal nunca queda de espaldas
+  const PITCH_MIN = 0.04;
+  const PITCH_MAX = 0.9;
+  const RETURN_AFTER = 6000;
+  const orbit = { yaw: 0, pitch: 0, vYaw: 0, vPitch: 0, drag: null, touchedAt: -Infinity };
+  const canvas = renderer.domElement;
+  canvas.style.cursor = 'grab';
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (e.button > 0) return;
+    orbit.drag = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    orbit.vYaw = orbit.vPitch = 0;
+    canvas.setPointerCapture(e.pointerId);
+    canvas.style.cursor = 'grabbing';
+  });
+  canvas.addEventListener('pointermove', (e) => {
+    const d = orbit.drag;
+    if (!d || d.id !== e.pointerId) return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    d.x = e.clientX;
+    d.y = e.clientY;
+    orbit.vYaw = -dx * 0.0075;
+    orbit.vPitch = dy * 0.005;
+    orbit.yaw += orbit.vYaw;
+    orbit.pitch += orbit.vPitch;
+    orbit.touchedAt = performance.now();
+  });
+  const endDrag = (e) => {
+    if (!orbit.drag || orbit.drag.id !== e.pointerId) return;
+    orbit.drag = null;
+    orbit.touchedAt = performance.now();
+    canvas.style.cursor = 'grab';
+  };
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+
+  function updateOrbit(t) {
+    if (!orbit.drag) {
+      // Inercia al soltar
+      orbit.yaw += orbit.vYaw;
+      orbit.pitch += orbit.vPitch;
+      orbit.vYaw *= 0.92;
+      orbit.vPitch *= 0.92;
+      // Vuelta suave al frente
+      if (t - orbit.touchedAt > RETURN_AFTER) {
+        orbit.yaw *= 0.97;
+        orbit.pitch *= 0.97;
+      }
+    }
+    const yaw = BASE_YAW + orbit.yaw;
+    if (yaw > YAW_LIMIT || yaw < -YAW_LIMIT) {
+      orbit.yaw = Math.max(-YAW_LIMIT, Math.min(YAW_LIMIT, yaw)) - BASE_YAW;
+      orbit.vYaw = 0;
+    }
+    const pitch = BASE_PITCH + orbit.pitch;
+    if (pitch > PITCH_MAX || pitch < PITCH_MIN) {
+      orbit.pitch = Math.max(PITCH_MIN, Math.min(PITCH_MAX, pitch)) - BASE_PITCH;
+      orbit.vPitch = 0;
+    }
+  }
+
   function placeCamera(t) {
-    pointer.x += (pointer.tx - pointer.x) * 0.035;
-    pointer.y += (pointer.ty - pointer.y) * 0.035;
-    const yaw = -0.32 + (reducedMotion ? 0 : Math.sin(t * 0.00012) * 0.06) + pointer.x * 0.1;
-    const pitch = 0.3 + pointer.y * 0.04;
+    // El paralaje se apaga mientras se gira la urna y vuelve poco a poco.
+    const quiet = Math.min(1, Math.max(0, (t - orbit.touchedAt - 1500) / 3000));
+    pointer.x += (pointer.tx * quiet - pointer.x) * 0.035;
+    pointer.y += (pointer.ty * quiet - pointer.y) * 0.035;
+    const sway = reducedMotion ? 0 : Math.sin(t * 0.00012) * 0.06 * quiet;
+    const yaw = BASE_YAW + orbit.yaw + sway + pointer.x * 0.1;
+    const pitch = BASE_PITCH + orbit.pitch + pointer.y * 0.04;
     camera.position.set(
       lookAt.x + Math.sin(yaw) * Math.cos(pitch) * baseDist,
       lookAt.y + Math.sin(pitch) * baseDist,
@@ -579,6 +649,7 @@ export function createUrn(container, { onImpact, onReady } = {}) {
       meshes[c].instanceMatrix.needsUpdate = true;
     }
 
+    updateOrbit(t);
     placeCamera(t);
     if (mine && openedAt >= 0 && t > openedAt) {
       mark.position.copy(mine.body.position);
