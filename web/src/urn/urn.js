@@ -596,6 +596,18 @@ export function createUrn(container, { onImpact, onReady } = {}) {
   // Abre con un pequeño rebote, como una tapa de madera que llega al tope de sus bisagras.
   const easeDoor = (u) => 1 + 1.9 * (u - 1) ** 3 + 0.9 * (u - 1) ** 2;
 
+  let markOpacity = 0;
+  const eye = new THREE.Vector3();
+  /** ¿Se ve la bola a través del cristal desde la cámara, o la tapa la madera de la caja? */
+  function seenThroughGlass(p) {
+    eye.copy(camera.position);
+    if (eye.z <= GLASS_Z || p.z >= GLASS_Z) return true;
+    const k = (GLASS_Z - eye.z) / (p.z - eye.z);
+    const x = eye.x + (p.x - eye.x) * k;
+    const y = eye.y + (p.y - eye.y) * k;
+    return Math.abs(x) <= WIN.x && y >= WIN.y0 && y <= WIN.y1;
+  }
+
   function frame(t) {
     requestAnimationFrame(frame);
     resize();
@@ -653,11 +665,12 @@ export function createUrn(container, { onImpact, onReady } = {}) {
     placeCamera(t);
     if (mine && openedAt >= 0 && t > openedAt) {
       mark.position.copy(mine.body.position);
-      // Se desvanece si la urna está tan girada que la bola quedaría detrás de la madera.
-      const sideways = Math.abs(BASE_YAW + orbit.yaw);
-      const facing = Math.min(1, Math.max(0, (0.85 - sideways) / 0.25));
-      mark.material.opacity = Math.min(1, (t - openedAt) / 500) * facing;
+      // Nunca desaparece: si la madera tapa la bola, el círculo se queda atenuado.
+      const target = Math.min(1, (t - openedAt) / 500) * (seenThroughGlass(mine.body.position) ? 1 : 0.45);
+      markOpacity += (target - markOpacity) * 0.15;
+      mark.material.opacity = markOpacity;
     } else {
+      markOpacity = 0;
       mark.material.opacity = 0;
     }
 
