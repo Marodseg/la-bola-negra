@@ -28,14 +28,19 @@ Revisa la pregunta que te pasen:
 - Que se pueda responder solo con sí o con no: si plantea dos opciones con «o», no vale.
 - Que no trate de partidos, políticos, religión, violencia, sexo, tragedias ni personas reales, ni ofenda a ningún colectivo.
 
-Si se puede arreglar con cambios pequeños, corrígela. Si no, recházala.
-Responde solo con JSON: {"aprobada": true|false, "text": "pregunta final corregida", "motivo": "explicación breve"}.`;
+Responde con UNA sola línea y nada más:
+- OK, si la pregunta está bien tal cual.
+- La pregunta corregida, si basta con cambios pequeños.
+- RECHAZADA, si no tiene arreglo.`;
 
-const REVIEW_SCHEMA = {
-  type: 'object',
-  properties: { aprobada: { type: 'boolean' }, text: { type: 'string' }, motivo: { type: 'string' } },
-  required: ['aprobada', 'text'],
-};
+/** Limpia la respuesta del corrector: comillas, puntos o restos después del «?». */
+function cleanLine(raw) {
+  let line = String(raw ?? '').trim().split('\n')[0].trim();
+  line = line.replace(/^["'«“]+/, '');
+  const end = line.lastIndexOf('?');
+  if (end >= 0) line = line.slice(0, end + 1);
+  return line.trim();
+}
 
 function parse(response) {
   if (response && typeof response === 'object') return response;
@@ -53,21 +58,15 @@ async function review(env, model, question) {
   const out = await env.AI.run(model, {
     messages: [
       { role: 'system', content: REVIEW },
-      { role: 'user', content: `Pregunta: ${question.text}\nCategoría: ${question.category}` },
+      { role: 'user', content: `Pregunta: ${question.text}` },
     ],
-    max_tokens: 200,
-    temperature: 0.2,
-    response_format: { type: 'json_schema', json_schema: REVIEW_SCHEMA },
+    max_tokens: 120,
+    temperature: 0.1,
   });
-  const verdict = parse(out?.response);
-  if (!verdict || verdict.aprobada !== true) {
-    return { ok: false, reason: `revisión: ${verdict?.motivo ?? 'rechazada'}` };
-  }
-  // El corrector a veces devuelve la pregunta entre comillas o con espacios de más.
-  const text = typeof verdict.text === 'string'
-    ? verdict.text.trim().replace(/^["'«“]+|["'»”]+$/g, '').replace(/\?\s*\.$/, '?').trim()
-    : '';
-  return { ok: true, question: { ...question, text: text || question.text } };
+  const answer = cleanLine(typeof out?.response === 'string' ? out.response : JSON.stringify(out?.response ?? ''));
+  if (/^rechazada/i.test(answer)) return { ok: false, reason: 'revisión: rechazada' };
+  if (!answer || /^ok\b/i.test(answer)) return { ok: true, question };
+  return { ok: true, question: { ...question, text: answer } };
 }
 
 /**

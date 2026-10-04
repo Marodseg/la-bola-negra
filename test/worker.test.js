@@ -13,12 +13,12 @@ const B = '22222222-2222-4222-8222-222222222222';
 const quiet = { warn() {} };
 
 /** IA simulada: `propose` responde a la petición de pregunta y `revise` a la revisión de estilo. */
-function fakeAI(propose, revise = (q) => ({ aprobada: true, text: q.text })) {
+function fakeAI(propose, revise = () => 'OK') {
   return {
     async run(_model, input) {
       if (input.messages[0].content.startsWith('Eres corrector')) {
         const text = input.messages[1].content.match(/^Pregunta: (.*)$/m)[1];
-        return { response: revise({ text }) };
+        return { response: revise(text) };
       }
       return { response: propose() };
     },
@@ -222,13 +222,13 @@ describe('preguntas', () => {
 
   test('la revisión de estilo corrige o descarta lo que propone la IA', async () => {
     const draft = { text: '¿Prefieres la tapas gratuitas con la consumición?', category: 'Gastronomía' };
-    const corrige = { AI: fakeAI(() => draft, () => ({ aprobada: true, text: '¿Prefieres las tapas gratis con la consumición?' })) };
+    const corrige = { AI: fakeAI(() => draft, () => '¿Prefieres las tapas gratis con la consumición?') };
     assert.equal((await generateWithAI(corrige, [], { attempts: 1, log: quiet })).text, '¿Prefieres las tapas gratis con la consumición?');
-    const comillas = { AI: fakeAI(() => draft, () => ({ aprobada: true, text: '«¿Prefieres las tapas gratis con la consumición?» ' })) };
+    const comillas = { AI: fakeAI(() => draft, () => "«¿Prefieres las tapas gratis con la consumición?',» \nExplicación de más") };
     assert.equal((await generateWithAI(comillas, [], { attempts: 1, log: quiet })).text, '¿Prefieres las tapas gratis con la consumición?');
-    const roto = { AI: fakeAI(() => ({ text: '¿Deberían los museos abrir gratis los domingos por la tarde?', category: 'Cultura' }), () => ({ aprobada: true, text: 'Museos gratis' })) };
+    const roto = { AI: fakeAI(() => ({ text: '¿Deberían los museos abrir gratis los domingos por la tarde?', category: 'Cultura' }), () => 'Museos gratis') };
     assert.equal((await generateWithAI(roto, [], { attempts: 1, log: quiet })).text, '¿Deberían los museos abrir gratis los domingos por la tarde?');
-    const rechaza = { AI: fakeAI(() => draft, () => ({ aprobada: false, text: '', motivo: 'confusa' })) };
+    const rechaza = { AI: fakeAI(() => draft, () => 'RECHAZADA') };
     assert.equal(await generateWithAI(rechaza, [], { attempts: 2, log: quiet }), null);
   });
 
