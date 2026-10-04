@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Bodoni; src: url(../node_modules/@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-opsz-normal.woff2); font-weight: 400 900; }
+  @font-face { font-family: Bodoni; font-style: italic; src: url(../node_modules/@fontsource-variable/bodoni-moda/files/bodoni-moda-latin-opsz-italic.woff2); font-weight: 400 900; }
+  @font-face { font-family: Caslon; font-style: italic; src: url(../node_modules/@fontsource/libre-caslon-text/files/libre-caslon-text-latin-400-italic.woff2); }
+  @font-face { font-family: Gothic; src: url(../node_modules/@fontsource/league-gothic/files/league-gothic-latin-400-normal.woff2); }
+  html, body { margin: 0; }
+  body {
+    width: 1200px; height: 630px; box-sizing: border-box; padding: 46px 70px;
+    background: #efe7d6 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .16 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='.38'/%3E%3C/svg%3E");
+    color: #1c1814; font-family: Caslon, serif; position: relative; overflow: hidden;
+  }
+  body::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 110% 90% at 50% 45%, transparent 55%, rgba(120,90,50,.22)); }
+  .folio { display: flex; justify-content: space-between; font-family: Gothic; font-size: 26px; letter-spacing: .1em; text-transform: uppercase; color: #463e34; padding-bottom: 10px; }
+  .rule { height: 9px; border-top: 4px solid #1c1814; border-bottom: 1.5px solid #1c1814; }
+  .title { display: flex; align-items: center; justify-content: center; gap: 34px; margin: 16px 0 0; }
+  .title h1 { margin: 0; font-family: Bodoni; font-weight: 800; font-size: 132px; line-height: 1; letter-spacing: -.015em; font-variation-settings: "opsz" 96; padding-bottom: 22px; white-space: nowrap; }
+  .title i { font-weight: 900; }
+  .orb { width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 34% 30%, #6d655c, #1c1814 38%, #0b0907); }
+  .strap { text-align: center; font-size: 28px; color: #463e34; margin: 0 0 18px; }
+  .bottom { display: flex; align-items: center; justify-content: center; gap: 56px; margin-top: 34px; }
+  .ball { width: 120px; height: 120px; border-radius: 50%; box-shadow: 14px 18px 22px -8px rgba(60,40,20,.45); }
+  .w { background: radial-gradient(circle at 33% 27%, rgba(255,255,255,.95) 0 7%, transparent 22%), radial-gradient(circle at 40% 35%, #fffcf3, #f1e8d4 38%, #cdbf9f 78%, #9c8e72); }
+  .n { background: radial-gradient(circle at 33% 27%, rgba(255,250,240,.55) 0 5%, transparent 18%), radial-gradient(circle at 40% 35%, #4d4740, #1a1612 40%, #070605 85%); position: relative; }
+  .n::after { content: ""; position: absolute; inset: -18px; border: 4px solid #9e2a1d; border-radius: 50%; transform: rotate(-12deg) scale(1.02, .96); }
+  .q { font-family: Bodoni; font-style: italic; font-weight: 600; font-size: 64px; font-variation-settings: "opsz" 48; }
+  .stamp { position: absolute; right: 86px; bottom: 54px; font-family: Gothic; font-size: 46px; letter-spacing: .1em; color: #9e2a1d; border: 5px double #9e2a1d; padding: 4px 14px 0; transform: rotate(-9deg); opacity: .85; }
+.foot { position: absolute; left: 70px; right: 70px; bottom: 44px; display: flex; justify-content: space-between; padding-top: 12px; border-top: 1.5px solid #1c1814; font-family: Gothic; font-size: 26px; letter-spacing: .1em; text-transform: uppercase; color: #463e34; }
+  .foot b { color: #9e2a1d; font-weight: 400; }
+</style>
+</head>
+<body>
+  <div class="folio"><span>Año I</span><span>Boletín de votación pública</span><span>España · Edición diaria</span></div>
+  <div class="rule"></div>
+  <div class="title"><span class="orb"></span><h1>La Bola <i>Negra</i></h1><span class="orb"></span></div>
+  <p class="strap">Una proposición al día para toda España. Un voto por persona, en secreto.</p>
+  <div class="rule"></div>
+  <div class="bottom"><span class="ball w"></span><span class="q">¿Blanca o negra?</span><span class="ball n"></span></div>
+  <div class="foot"><span>Bola blanca: sí</span><span><b>Una sola bola por persona</b></span><span>Bola negra: no</span></div>
+</body>
+</html>

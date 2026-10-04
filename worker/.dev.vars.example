@@ -1,0 +1,2 @@
+# npm run dev crea worker/.dev.vars automáticamente con un secreto aleatorio.
+HASH_SECRET=pon-aqui-un-texto-largo-y-aleatorio

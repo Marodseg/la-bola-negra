@@ -1,0 +1,16 @@
+{
+  "name": "La Bola Negra",
+  "short_name": "Bola Negra",
+  "description": "Una proposición al día para toda España. Bola blanca o bola negra.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#efe7d6",
+  "theme_color": "#efe7d6",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

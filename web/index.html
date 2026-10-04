@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>La Bola Negra · Boletín de votación pública</title>
+  <meta name="description" content="Una proposición al día para toda España. Se vota con bola blanca o bola negra, una sola vez y en secreto.">
+  <meta name="author" content="Marodseg · Manuel Ángel Rodríguez Segura">
+  <meta name="theme-color" content="#efe7d6">
+  <meta name="color-scheme" content="light">
+  <link rel="canonical" href="%SITE_URL%/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="La Bola Negra">
+  <meta property="og:title" content="La Bola Negra · ¿Bola blanca o bola negra?">
+  <meta property="og:description" content="Una proposición al día para toda España. Un voto por persona, en secreto, con bola blanca o bola negra.">
+  <meta property="og:url" content="%SITE_URL%/">
+  <meta property="og:image" content="%SITE_URL%/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <script type="module" src="./src/main.js"></script>
+</head>
+<body class="page-home">
+  <a class="skip" href="#proposicion">Saltar a la votación</a>
+
+  <header class="masthead">
+    <div class="folio">
+      <span id="folio-num">Año I</span>
+      <span class="folio-date" id="folio-date">&nbsp;</span>
+      <span>España · Edición diaria</span>
+    </div>
+    <div class="rule-double" aria-hidden="true"></div>
+    <a class="title" href="./" aria-label="La Bola Negra, portada">
+      <span class="title-orn" aria-hidden="true"></span>
+      <span class="title-text">La Bola <span class="title-negra">Negra</span></span>
+      <span class="title-orn" aria-hidden="true"></span>
+    </a>
+    <p class="strap">Boletín de votación pública &nbsp;·&nbsp; Una proposición al día para toda España &nbsp;·&nbsp; Precio: una bola</p>
+    <div class="rule-double rule-double--bottom" aria-hidden="true"></div>
+    <nav class="nav" aria-label="Secciones">
+      <a href="#proposicion" aria-current="page">Proposición del día</a>
+      <a href="#actas">Libro de actas</a>
+      <a href="#reglamento">Reglamento</a>
+      <button class="sound" id="sound-toggle" type="button" aria-pressed="true">Sonido: sí</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="session" id="proposicion" aria-labelledby="question">
+      <div class="session-copy">
+        <p class="kicker"><span class="kicker-red">Proposición del día</span> <span class="kicker-num" id="session-num"></span></p>
+        <h1 class="question" id="question"><span class="question-wait">Componiendo la proposición…</span></h1>
+        <p class="deck" id="deck">Deposite en la urna una <em>bola blanca</em> si está conforme o una <em>bola negra</em> si no lo está. El escrutinio permanece en secreto hasta que haya votado.</p>
+
+        <div class="ballot" id="ballot" hidden>
+          <p class="ballot-title"><span>Tome su bola</span></p>
+          <div class="plates" role="group" aria-label="Elija su bola">
+            <figure class="plate">
+              <button class="ball ball--blanca" type="button" data-ball="blanca" aria-label="Depositar bola blanca: sí, conforme">
+                <svg class="pencil" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 8c30-1 52 20 52 50 0 31-24 54-54 53-29-1-50-23-49-52 1-27 21-48 50-50 7 0 13 1 18 3"/></svg>
+              </button>
+              <figcaption><span class="plate-letter">A.</span> Bola blanca <strong>Sí</strong></figcaption>
+            </figure>
+            <figure class="plate">
+              <button class="ball ball--negra" type="button" data-ball="negra" aria-label="Depositar bola negra: no, disconforme">
+                <svg class="pencil" viewBox="0 0 120 120" aria-hidden="true"><path d="M60 8c30-1 52 20 52 50 0 31-24 54-54 53-29-1-50-23-49-52 1-27 21-48 50-50 7 0 13 1 18 3"/></svg>
+              </button>
+              <figcaption><span class="plate-letter">B.</span> Bola negra <strong>No</strong></figcaption>
+            </figure>
+          </div>
+          <p class="hint" id="hint">Arrastre su bola hasta la urna, o púlsela dos veces.</p>
+          <div id="turnstile" class="turnstile"></div>
+        </div>
+
+        <article class="acta" id="acta" hidden aria-live="polite" aria-labelledby="acta-title">
+          <header class="acta-head">
+            <p class="acta-kicker" id="acta-session"></p>
+            <h2 class="acta-title" id="acta-title">Acta de escrutinio</h2>
+            <p class="acta-sub">provisional · se cierra a medianoche</p>
+          </header>
+          <dl class="ledger">
+            <div class="ledger-row"><dt><span class="dot dot--blanca" aria-hidden="true"></span>Bolas blancas <small>(sí)</small></dt><dd><b id="count-blanca">0</b> <span class="pct" id="pct-blanca">0 %</span></dd></div>
+            <div class="ledger-row"><dt><span class="dot dot--negra" aria-hidden="true"></span>Bolas negras <small>(no)</small></dt><dd><b id="count-negra">0</b> <span class="pct" id="pct-negra">0 %</span></dd></div>
+            <div class="ledger-row ledger-row--total"><dt>Total de votantes</dt><dd><b id="count-total">0</b></dd></div>
+            <div class="ledger-row"><dt>Su voto</dt><dd id="my-ball">—</dd></div>
+          </dl>
+          <div class="tally-bar" aria-hidden="true"><span class="tally-blanca" id="bar-blanca"></span><span class="tally-negra" id="bar-negra"></span></div>
+          <p class="stamp" id="stamp" aria-hidden="true"></p>
+          <p class="verdict" id="verdict"></p>
+          <footer class="acta-foot">
+            <p class="next">Próxima sesión en <time id="countdown">—</time></p>
+            <div class="acta-actions">
+              <button class="btn btn--ink" id="share" type="button">Compartir</button>
+              <a class="btn" href="./historico.html">Libro de actas</a>
+            </div>
+          </footer>
+        </article>
+      </div>
+
+      <figure class="urn-figure">
+        <div class="stage" id="stage">
+          <svg class="urn-sketch" id="urn-sketch" viewBox="0 0 400 360" aria-hidden="true">
+            <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round">
+              <path d="M70 120 L330 120 L350 100 L90 100 Z"/>
+              <path d="M70 120 L70 300 L330 300 L330 120"/>
+              <path d="M330 300 L350 280 L350 100"/>
+              <ellipse cx="210" cy="110" rx="26" ry="6"/>
+              <rect x="96" y="146" width="208" height="128"/>
+              <rect x="106" y="156" width="188" height="108"/>
+              <rect x="166" y="176" width="68" height="20"/>
+              <circle cx="200" cy="244" r="5"/>
+              <path d="M56 300 L344 300 L360 312 L48 312 Z"/>
+            </g>
+            <g stroke="currentColor" stroke-width=".6" opacity=".55">
+              <path d="M74 126 L74 296 M80 126 L80 296 M86 126 L86 296 M314 126 L314 296 M320 126 L320 296 M326 126 L326 296"/>
+              <path d="M336 118 L336 290 M342 112 L342 286"/>
+            </g>
+          </svg>
+          <div class="stage-loading" id="stage-loading">Preparando la urna…</div>
+        </div>
+        <figcaption class="caption">
+          <span class="caption-fig">Fig. 1.</span>
+          <span id="caption-text">Urna de votación. Se abrirá cuando haya depositado su bola.</span>
+          <span class="caption-live" id="live" hidden>Han votado hoy <b id="live-count">0</b> <span id="live-word">personas</span>.</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <div class="orn-rule" aria-hidden="true"><span></span></div>
+
+    <section class="section" id="actas" aria-labelledby="actas-title">
+      <header class="section-head">
+        <p class="kicker"><span class="kicker-red">Sección segunda</span></p>
+        <h2 class="section-title" id="actas-title">Libro de actas</h2>
+        <p class="section-deck">Lo que ya ha decidido España, sesión por sesión.</p>
+      </header>
+      <div class="table-wrap">
+        <table class="actas">
+          <thead>
+            <tr><th scope="col">Nº</th><th scope="col">Fecha</th><th scope="col">Proposición</th><th scope="col" class="num">Blancas</th><th scope="col" class="num">Negras</th><th scope="col">Resultado</th></tr>
+          </thead>
+          <tbody id="actas-body">
+            <tr><td colspan="6" class="actas-empty">Cargando el libro de actas…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="section-more"><a href="./historico.html">Consultar el histórico completo</a> <span aria-hidden="true">·</span> <a id="download-csv" href="#">Descargar en CSV</a> <span aria-hidden="true">·</span> <a id="download-json" href="#">en JSON</a></p>
+    </section>
+
+    <div class="orn-rule" aria-hidden="true"><span></span></div>
+
+    <section class="section" id="reglamento" aria-labelledby="reglamento-title">
+      <header class="section-head">
+        <p class="kicker"><span class="kicker-red">Sección tercera</span></p>
+        <h2 class="section-title" id="reglamento-title">Reglamento</h2>
+      </header>
+      <ol class="articles">
+        <li><h3>Artículo 1.º <span>De las sesiones</span></h3><p>Cada día, a medianoche en hora peninsular, se cierra la votación anterior y se abre una proposición nueva para toda España.</p></li>
+        <li><h3>Artículo 2.º <span>Del voto</span></h3><p>Cada persona deposita una sola bola por proposición: blanca si está conforme, negra si no lo está. Una vez en la urna, no hay vuelta atrás.</p></li>
+        <li><h3>Artículo 3.º <span>Del secreto</span></h3><p>El escrutinio no se muestra hasta haber votado, para que nadie se deje llevar por lo que opinan los demás.</p></li>
+        <li><h3>Artículo 4.º <span>De las proposiciones</span></h3><p>Las proposiciones salen de un banco redactado a mano. Cuando se agota, las propone un modelo de inteligencia artificial que pasa unos filtros: nada de partidos, religión, personas reales ni temas que hieran a nadie.</p></li>
+        <li><h3>Artículo 5.º <span>Del anonimato</span></h3><p>No se usan cookies ni se guarda dato personal alguno. Los detalles, en el <a href="./privacidad.html">aviso de privacidad</a>.</p></li>
+        <li><h3>Artículo 6.º <span>De la transparencia</span></h3><p>El código de este boletín es abierto y puede consultarse en <a href="https://github.com/Marodseg/la-bola-negra" rel="noopener">GitHub</a>. Las actas de todas las sesiones son públicas y descargables.</p></li>
+      </ol>
+      <p class="disclaimer">La Bola Negra es un pasatiempo, no una encuesta científica: vota quien quiere y los resultados no representan a la población española.</p>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <div class="rule-double" aria-hidden="true"></div>
+    <p class="colophon-title">La Bola Negra</p>
+    <p>Compuesto en Bodoni Moda y Libre Caslon. Impreso en la red por <strong>Marodseg</strong> (Manuel Ángel Rodríguez Segura), MMXXVI.</p>
+    <p class="colophon-links"><a href="./historico.html">Histórico</a> · <a href="./privacidad.html">Privacidad</a> · <a href="https://github.com/Marodseg/la-bola-negra" rel="noopener">Código fuente</a></p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,4 +1,10 @@
 node_modules/
-data/
-*.log
+dist/
+.wrangler/
+worker/.wrangler/
+worker/.dev.vars
 .env
+.env.*
+!.env.example
+*.log
+.DS_Store

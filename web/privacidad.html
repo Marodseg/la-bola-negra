@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Aviso de privacidad · La Bola Negra</title>
+  <meta name="description" content="Qué datos trata La Bola Negra: ninguno personal. Sin cookies, sin rastreo y con el código a la vista.">
+  <meta name="author" content="Marodseg · Manuel Ángel Rodríguez Segura">
+  <meta name="theme-color" content="#efe7d6">
+  <meta name="color-scheme" content="light">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="La Bola Negra">
+  <meta property="og:title" content="Aviso de privacidad · La Bola Negra">
+  <meta property="og:description" content="Qué datos trata La Bola Negra: ninguno personal. Sin cookies, sin rastreo y con el código a la vista.">
+  <meta property="og:image" content="%SITE_URL%/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <script type="module" src="./src/static.js"></script>
+</head>
+<body class="page-inner">
+  <a class="skip" href="#contenido">Saltar al contenido</a>
+  <header class="masthead masthead--small">
+    <div class="folio"><span>La Bola Negra</span><span class="folio-date">Aviso de privacidad</span><span>España · Edición diaria</span></div>
+    <div class="rule-double" aria-hidden="true"></div>
+    <a class="title" href="./" aria-label="La Bola Negra, portada">
+      <span class="title-orn" aria-hidden="true"></span>
+      <span class="title-text">La Bola <span class="title-negra">Negra</span></span>
+      <span class="title-orn" aria-hidden="true"></span>
+    </a>
+    <div class="rule-double rule-double--bottom" aria-hidden="true"></div>
+    <nav class="nav" aria-label="Secciones">
+      <a href="./">Portada</a>
+      <a href="./historico.html">Histórico</a>
+      <a href="./privacidad.html" aria-current="page">Privacidad</a>
+    </nav>
+  </header>
+
+  <main id="contenido" class="inner prose">
+    <header class="section-head">
+      <p class="kicker"><span class="kicker-red">Aviso</span></p>
+      <h1 class="section-title">Privacidad</h1>
+      <p class="section-deck">En corto: no sabemos quién es usted, ni queremos saberlo.</p>
+    </header>
+
+    <h2>Qué se guarda al votar</h2>
+    <p>Solo lo imprescindible: el día, el color de la bola y dos huellas criptográficas que no se pueden revertir.</p>
+    <ul>
+      <li><strong>Huella del navegador.</strong> Su navegador genera un identificador aleatorio que se guarda en su propio dispositivo (<code>localStorage</code>). Al servidor solo llega para comprobar que no ha votado ya, y en la base de datos se guarda su huella HMAC, nunca el identificador.</li>
+      <li><strong>Huella de la conexión.</strong> Para limitar a cinco los votos por conexión y día, se guarda una huella HMAC de la IP mezclada con la fecha. Cambia cada día, así que no permite seguir a nadie de un día para otro. La IP en sí no se guarda.</li>
+    </ul>
+
+    <h2>Lo que no hay</h2>
+    <ul>
+      <li>Ni cookies, ni publicidad, ni analítica, ni píxeles de seguimiento.</li>
+      <li>Ni cuentas, ni correos, ni nombres.</li>
+      <li>Las tipografías se sirven desde la propia web: no se llama a Google ni a ningún otro tercero.</li>
+    </ul>
+
+    <h2>Protección contra abusos</h2>
+    <p>Si está activada, la votación usa <a href="https://www.cloudflare.com/es-es/products/turnstile/" rel="noopener">Cloudflare Turnstile</a> para comprobar que quien vota no es un programa automático. Turnstile no usa cookies de seguimiento ni rompecabezas de imágenes. La web y la API se sirven a través de GitHub Pages y Cloudflare, que como cualquier servidor reciben su IP para poder entregarle la página.</p>
+
+    <h2>Resultados públicos</h2>
+    <p>Los recuentos de cada sesión son públicos y se pueden descargar. No contienen ningún dato de votantes, solo cuántas bolas de cada color hubo.</p>
+
+    <h2>Responsable y contacto</h2>
+    <p>Este proyecto lo mantiene Marodseg (Manuel Ángel Rodríguez Segura) a título personal. Para cualquier duda o para ejercer sus derechos, abra una consulta en el <a href="https://github.com/Marodseg/la-bola-negra/issues" rel="noopener">repositorio de GitHub</a>. Como no se guardan datos que le identifiquen, no es posible localizar ni borrar «su» voto concreto.</p>
+    <p class="note">Última revisión: octubre de 2026.</p>
+  </main>
+
+  <footer class="colophon">
+    <div class="rule-double" aria-hidden="true"></div>
+    <p class="colophon-title">La Bola Negra</p>
+    <p>Compuesto en Bodoni Moda y Libre Caslon. Impreso en la red por <strong>Marodseg</strong> (Manuel Ángel Rodríguez Segura), MMXXVI.</p>
+    <p class="colophon-links"><a href="./">Portada</a> · <a href="./historico.html">Histórico</a> · <a href="./privacidad.html">Privacidad</a> · <a href="https://github.com/Marodseg/la-bola-negra" rel="noopener">Código fuente</a></p>
+  </footer>
+</body>
+</html>

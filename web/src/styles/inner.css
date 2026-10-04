@@ -1,0 +1,81 @@
+/* Páginas interiores: histórico, privacidad, 404 */
+
+.masthead--small .title-text { font-size: clamp(2.4rem, 8vw, 5.2rem); }
+.masthead--small .title { margin-bottom: 6px; }
+
+.inner {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: clamp(32px, 6vw, 56px) var(--gutter) 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0 0 28px;
+  border-top: 3px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.stats div { padding: 14px 10px; text-align: center; }
+.stats div + div { border-left: 1px solid var(--ink); }
+.stats dt {
+  font-family: var(--cond);
+  font-size: 1rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.stats dd {
+  margin: 2px 0 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-variant-numeric: lining-nums;
+  line-height: 1.1;
+}
+@media (max-width: 620px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stats div:nth-child(3) { border-left: 0; }
+  .stats div:nth-child(n + 3) { border-top: 1px solid var(--ink); }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-bottom: 16px;
+}
+.search { display: flex; flex-direction: column; gap: 4px; flex: 1 1 280px; max-width: 420px; }
+.search span { font-family: var(--cond); font-size: 1rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.search input {
+  min-height: 44px;
+  padding: 8px 2px;
+  border: 0;
+  border-bottom: 1.5px solid var(--ink);
+  background: transparent;
+  font: inherit;
+  font-style: italic;
+  color: var(--ink);
+}
+.search input:focus { outline: none; border-bottom-color: var(--red); }
+.downloads { margin: 0; font-family: var(--cond); font-size: 1.1rem; letter-spacing: .08em; text-transform: uppercase; }
+
+.more { margin: 22px 0 0; text-align: center; }
+.note { margin-top: 26px; font-size: .9rem; font-style: italic; text-align: center; color: var(--ink-3); }
+
+.prose { max-width: 760px; }
+.prose h2 {
+  margin: 34px 0 8px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  font-variation-settings: "opsz" 36;
+}
+.prose ul { padding-left: 1.2em; }
+.prose li { margin-bottom: 8px; }
+.prose li::marker { color: var(--red); }
+.prose code { font-size: .9em; }
+.notfound { text-align: center; }
+.notfound .section-title { margin-bottom: 14px; }

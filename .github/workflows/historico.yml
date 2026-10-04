@@ -1,0 +1,49 @@
+name: Guardar histórico
+
+# Cada noche guarda en el repositorio una copia pública de todas las actas (CSV y JSON).
+on:
+  schedule:
+    - cron: '40 23 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historico
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ vars.API_URL }}
+    steps:
+      - name: Comprobar configuración
+        id: config
+        run: |
+          if [ -z "$API_URL" ]; then
+            echo "::warning::Falta la variable API_URL; no hay histórico que guardar todavía."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.config.outputs.ready == 'true'
+      - name: Descargar actas
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          mkdir -p historico
+          curl --fail --silent --show-error --retry 3 "$API_URL/api/historico.csv" -o historico/historico.csv
+          curl --fail --silent --show-error --retry 3 "$API_URL/api/historico.json" -o historico/historico.json
+      - name: Guardar cambios
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          git add historico
+          if git diff --cached --quiet; then
+            echo "Sin cambios en el histórico."
+            exit 0
+          fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "Histórico: actas hasta $(date -u +%F)"
+          git push

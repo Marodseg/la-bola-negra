@@ -1,0 +1,55 @@
+name = "la-bola-negra-api"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+workers_dev = true
+
+[vars]
+# Orígenes desde los que se puede usar la API (separados por comas).
+ALLOWED_ORIGINS = "https://marodseg.github.io,http://localhost:5173,http://127.0.0.1:5173"
+# Votos máximos por conexión (IP) y día: una casa que comparte wifi puede votar entera.
+MAX_VOTES_PER_IP = "5"
+# Modelo gratuito de Workers AI para proponer preguntas cuando se agota el banco.
+AI_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+# "true" para que la IA proponga todas las preguntas, aunque queden en el banco.
+PREFER_AI = "false"
+# Clave pública de Cloudflare Turnstile (anti-bots). Vacía = desactivado.
+TURNSTILE_SITE_KEY = ""
+
+# Secretos (no van aquí, se configuran con `wrangler secret put`):
+#   HASH_SECRET       obligatorio, firma los identificadores anónimos
+#   TURNSTILE_SECRET  opcional, activa la verificación anti-bots
+
+[[d1_databases]]
+binding = "DB"
+database_name = "la-bola-negra"
+# El flujo de despliegue sustituye este valor por el secreto D1_DATABASE_ID.
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[ai]
+binding = "AI"
+
+# Prepara la pregunta de hoy y la de mañana. Dos horarios por si uno falla.
+[triggers]
+crons = ["0 20 * * *", "0 3 * * *"]
+
+[observability]
+enabled = true
+
+# Entorno de desarrollo local: sin IA (necesita cuenta de Cloudflare) ni tareas programadas.
+# npm run dev lo arranca con `wrangler dev --env desarrollo`.
+[env.desarrollo]
+name = "la-bola-negra-api-desarrollo"
+
+[env.desarrollo.vars]
+ALLOWED_ORIGINS = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173"
+MAX_VOTES_PER_IP = "1000"
+AI_MODEL = ""
+PREFER_AI = "false"
+TURNSTILE_SITE_KEY = ""
+
+[[env.desarrollo.d1_databases]]
+binding = "DB"
+database_name = "la-bola-negra"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"

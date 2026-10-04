@@ -1,0 +1,78 @@
+name: Desplegar API (Cloudflare Workers)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - '.github/workflows/worker.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      D1_DATABASE_ID: ${{ secrets.D1_DATABASE_ID }}
+      HASH_SECRET: ${{ secrets.HASH_SECRET }}
+      TURNSTILE_SECRET: ${{ secrets.TURNSTILE_SECRET }}
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - name: Comprobar secretos
+        id: config
+        run: |
+          missing=""
+          for s in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID D1_DATABASE_ID HASH_SECRET; do
+            [ -z "${!s}" ] && missing="$missing $s"
+          done
+          if [ -n "$missing" ]; then
+            echo "::warning::Faltan secretos:$missing. La API no se despliega hasta configurarlos (docs/despliegue.md)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.config.outputs.ready == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.config.outputs.ready == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+        if: steps.config.outputs.ready == 'true'
+
+      - name: Poner el identificador de la base de datos
+        if: steps.config.outputs.ready == 'true'
+        run: sed -i "s/00000000-0000-0000-0000-000000000000/${D1_DATABASE_ID}/" worker/wrangler.toml
+
+      - name: Aplicar migraciones de la base de datos
+        if: steps.config.outputs.ready == 'true'
+        run: npx wrangler d1 migrations apply la-bola-negra --remote --config worker/wrangler.toml
+
+      - name: Desplegar
+        if: steps.config.outputs.ready == 'true'
+        env:
+          ALLOWED_ORIGINS: ${{ vars.ALLOWED_ORIGINS }}
+          TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
+        run: |
+          args=()
+          [ -n "$ALLOWED_ORIGINS" ] && args+=(--var "ALLOWED_ORIGINS:$ALLOWED_ORIGINS")
+          [ -n "$TURNSTILE_SITE_KEY" ] && args+=(--var "TURNSTILE_SITE_KEY:$TURNSTILE_SITE_KEY")
+          npx wrangler deploy --config worker/wrangler.toml "${args[@]}"
+
+      - name: Subir secretos
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          printf '%s' "$HASH_SECRET" | npx wrangler secret put HASH_SECRET --config worker/wrangler.toml
+          if [ -n "$TURNSTILE_SECRET" ]; then
+            printf '%s' "$TURNSTILE_SECRET" | npx wrangler secret put TURNSTILE_SECRET --config worker/wrangler.toml
+          fi
