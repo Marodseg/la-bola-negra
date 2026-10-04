@@ -72,7 +72,7 @@ async function review(env, model, question) {
 /**
  * Pide una pregunta a Workers AI, la pasa por los filtros y por una revisión de estilo.
  * Devuelve null si no lo consigue.
- * @param {{ AI?: { run: Function }, AI_MODEL?: string }} env
+ * @param {{ AI?: { run: Function }, AI_MODEL?: string, AI_REVIEW_MODEL?: string }} env
  * @param {Array<string | { text: string, category?: string|null }>} recentItems  de la más reciente a la más antigua
  */
 export async function generateWithAI(env, recentItems, { attempts = 3, log = console } = {}) {
@@ -97,7 +97,7 @@ export async function generateWithAI(env, recentItems, { attempts = 3, log = con
         log.warn?.(`IA: pregunta descartada (${draft.reason})`);
         continue;
       }
-      const reviewed = await review(env, model, draft.question);
+      const reviewed = await review(env, env.AI_REVIEW_MODEL || model, draft.question);
       if (!reviewed.ok) {
         log.warn?.(`IA: «${draft.question.text}» descartada (${reviewed.reason})`);
         continue;

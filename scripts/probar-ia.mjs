@@ -13,6 +13,7 @@ if (!token || !account) {
 
 const toml = fs.readFileSync(path.resolve(import.meta.dirname, '../worker/wrangler.toml'), 'utf8');
 const model = process.env.AI_MODEL || toml.match(/^AI_MODEL\s*=\s*"([^"]+)"/m)?.[1];
+const reviewModel = process.env.AI_REVIEW_MODEL || toml.match(/^AI_REVIEW_MODEL\s*=\s*"([^"]+)"/m)?.[1] || model;
 const { banco } = JSON.parse(fs.readFileSync(path.resolve(import.meta.dirname, '../worker/src/questions/banco.json'), 'utf8'));
 
 // Imita el binding env.AI del Worker usando la API REST de Cloudflare.
@@ -33,9 +34,9 @@ const log = { warn: (m) => console.log(`  · ${m}`) };
 const recent = [...banco];
 let ok = 0;
 const rondas = Number(process.env.RONDAS ?? 3);
-console.log(`Modelo: ${model}\n`);
+console.log(`Modelo: ${model}\nCorrector: ${reviewModel}\n`);
 for (let i = 1; i <= rondas; i++) {
-  const q = await generateWithAI({ AI, AI_MODEL: model }, recent, { attempts: 3, log });
+  const q = await generateWithAI({ AI, AI_MODEL: model, AI_REVIEW_MODEL: reviewModel }, recent, { attempts: 3, log });
   if (q) {
     ok++;
     recent.unshift(q);

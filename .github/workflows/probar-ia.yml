@@ -3,6 +3,11 @@ name: Probar IA
 # Comprueba a mano que el modelo de Workers AI responde y que sus preguntas pasan los filtros.
 on:
   workflow_dispatch:
+    inputs:
+      corrector:
+        description: 'Modelo corrector (vacío = el de wrangler.toml)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -21,3 +26,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           RONDAS: '5'
+          AI_REVIEW_MODEL: ${{ inputs.corrector }}
