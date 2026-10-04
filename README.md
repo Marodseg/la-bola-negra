@@ -40,6 +40,16 @@ flowchart LR
 - **API** (`worker/`): un [Cloudflare Worker](https://developers.cloudflare.com/workers/) con base de datos [D1](https://developers.cloudflare.com/d1/). Una tarea programada deja preparadas cada noche la pregunta de hoy y la de mañana.
 - **Despliegue**: GitHub Actions publica la web en GitHub Pages y la API en Cloudflare con cada `push` a `main`. Todo cabe en los planes gratuitos.
 
+### Límites del plan gratuito
+
+| Recurso | Límite gratuito | Uso de La Bola Negra |
+| --- | --- | --- |
+| Peticiones al Worker | 100.000 al día | 2 o 3 por visita, más una cada 45 s durante media hora como mucho tras votar |
+| Escrituras en D1 | 100.000 al día | Unas 2 por voto |
+| Workers AI | 10.000 *neurons* al día | Una pregunta al día, solo cuando se agota el banco |
+
+Unas 20.000 visitas al día caben de sobra. Si algún día se queda corto, el plan de pago de Workers (5 $ al mes) multiplica los límites sin tocar el código.
+
 ## Las preguntas
 
 Nunca falta una pregunta. Para cada día se elige, por este orden:
@@ -49,7 +59,7 @@ Nunca falta una pregunta. Para cada día se elige, por este orden:
 3. **IA**: cuando el banco se agota, un modelo gratuito de Workers AI propone una nueva. Antes de publicarse pasa unos filtros: debe ser una pregunta de sí o no, de 25 a 130 caracteres, de una categoría permitida, sin temas vetados (partidos, políticos, religión, violencia…) y sin parecerse a ninguna anterior.
 4. **Reciclada**: si la IA falla, vuelve la pregunta del banco que lleva más tiempo sin salir.
 
-El banco y las fechas fijas están en [`worker/src/questions/banco.json`](worker/src/questions/banco.json).
+El banco y las fechas fijas están en [`worker/src/questions/banco.json`](worker/src/questions/banco.json). El flujo manual **Probar IA** genera preguntas con el modelo real y los mismos filtros, para comprobar en cualquier momento que la IA responde bien.
 
 ## Seguridad y privacidad
 
@@ -76,6 +86,7 @@ npm run dev        # API en http://127.0.0.1:8787 y web en http://localhost:5173
 | `npm run build` | Compila la web en `dist/` |
 | `npm run check` | Lint, tests y compilación |
 | `npm run imagenes` | Regenera la imagen para redes sociales y los iconos |
+| `node scripts/probar-ia.mjs` | Genera preguntas con el modelo real de Workers AI (también como flujo de GitHub «Probar IA») |
 
 ## Despliegue
 
@@ -107,7 +118,7 @@ worker/               API (Cloudflare Worker)
   migrations/         Esquema de la base de datos D1
 test/                 Tests (node:test, con D1 simulado sobre SQLite)
 historico/            Copia diaria de las actas (la genera GitHub Actions)
-.github/workflows/    CI, despliegue de web y API, histórico
+.github/workflows/    CI, despliegue de web y API, histórico diario y prueba de la IA
 ```
 
 ## Licencia

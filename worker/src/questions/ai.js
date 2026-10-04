@@ -8,6 +8,7 @@ Escribe UNA pregunta nueva, en español de España, que cumpla todo esto:
 - Le interesa a cualquier persona en España: vida cotidiana, costumbres, ciudades, trabajo, tecnología, gastronomía, cultura, deporte, ocio, educación, consumo, medio ambiente.
 - Puede abrir debate, pero sin partidos ni políticos concretos, sin religión, sin violencia, sexo ni tragedias, sin nombres de personas reales y sin señalar a ningún colectivo.
 - No repitas ni reformules ninguna de las preguntas recientes.
+- Varía: elige un tema y una categoría distintos de las últimas preguntas, y no empieces siempre igual (evita abusar de «¿Debería ser obligatorio…?»). También valen preguntas sobre gustos y costumbres («¿Prefieres…?», «¿Es mejor…?», «¿Te parece bien…?»).
 
 Responde solo con JSON: {"text": "...", "category": "..."}.
 "category" debe ser exactamente una de: ${CATEGORIES.join(', ')}.`;

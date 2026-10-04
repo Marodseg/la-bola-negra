@@ -219,6 +219,7 @@ async function reveal(results, myBall, { fresh }) {
 
   $('acta').hidden = false;
   renderActa(results, duration);
+  startLiveUpdates();
   stampActa(reducedMotion ? 0 : duration * 0.6);
 }
 
@@ -467,9 +468,21 @@ function startCountdown(ms) {
   setInterval(tick, 1000);
 }
 
+// Actualización en directo del acta: solo tras votar, con la pestaña visible y durante un rato.
+// Así una visita normal hace pocas peticiones y la API cabe holgada en el plan gratuito.
+const LIVE_EVERY = 45_000;
+const LIVE_MAX = 40; // unos 30 minutos
+let liveTimer = null;
+let livePolls = 0;
+
 function startLiveUpdates() {
-  setInterval(async () => {
+  if (liveTimer) return;
+  liveTimer = setInterval(async () => {
     if (document.hidden) return;
+    if (++livePolls > LIVE_MAX) {
+      clearInterval(liveTimer);
+      return;
+    }
     const { ok, data } = await api('/api/hoy');
     if (!ok) return;
     if (data.question.day !== state.day) {
@@ -477,12 +490,12 @@ function startLiveUpdates() {
       return;
     }
     renderLive(data.totalVotes);
-    if (state.myBall && data.results && data.results.total !== state.results.total) {
+    if (data.results && data.results.total !== state.results.total) {
       state.results = data.results;
       renderActa(data.results, 900);
       urn.pourTo(displayCounts(data.results), { duration: 1600 });
     }
-  }, 20_000);
+  }, LIVE_EVERY);
 }
 
 // ---------- Compartir ----------
@@ -534,7 +547,6 @@ async function init() {
   renderQuestion(data.question);
   renderLive(data.totalVotes);
   startCountdown(data.nextInMs);
-  startLiveUpdates();
 
   if (data.myBall) {
     $('deck').hidden = true;

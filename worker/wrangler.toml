@@ -5,7 +5,7 @@ workers_dev = true
 
 [vars]
 # Orígenes desde los que se puede usar la API (separados por comas).
-ALLOWED_ORIGINS = "https://marodseg.github.io,http://localhost:5173,http://127.0.0.1:5173"
+ALLOWED_ORIGINS = "https://marodseg.github.io"
 # Votos máximos por conexión (IP) y día: una casa que comparte wifi puede votar entera.
 MAX_VOTES_PER_IP = "5"
 # Modelo gratuito de Workers AI para proponer preguntas cuando se agota el banco.

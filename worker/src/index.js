@@ -25,6 +25,21 @@ async function deviceKey(request, env, day) {
   return hmac(env.HASH_SECRET, `dispositivo:${day}:${clientIp(request)}:${huella}`);
 }
 
+/**
+ * Respuestas públicas iguales para todos (el histórico): se guardan en la caché de Cloudflare
+ * según su Cache-Control, así no se consulta la base de datos en cada descarga.
+ * (En un subdominio workers.dev Cloudflare ignora esta caché; con dominio propio funciona.)
+ */
+async function edgeCached(request, build) {
+  const cache = globalThis.caches?.default;
+  const key = new Request(new URL(request.url).toString(), { method: 'GET' });
+  const hit = cache && (await cache.match(key));
+  if (hit) return new Response(hit.body, hit);
+  const response = await build();
+  if (cache && response.ok) await cache.put(key, response.clone());
+  return response;
+}
+
 const routes = {
   'GET /api/salud': async () => json({ ok: true }),
 
@@ -106,21 +121,21 @@ const routes = {
     });
   },
 
-  'GET /api/historico.json': async (request, env, now) => {
+  'GET /api/historico.json': (request, env, now) => edgeCached(request, async () => {
     const sessions = await closedSessions(env.DB, madridDay(now));
     return json({ generatedAt: now.toISOString(), sessions }, {
       cache: 'public, max-age=600',
       headers: { 'Content-Disposition': 'inline; filename="la-bola-negra-historico.json"' },
     });
-  },
+  }),
 
-  'GET /api/historico.csv': async (request, env, now) => {
+  'GET /api/historico.csv': (request, env, now) => edgeCached(request, async () => {
     const sessions = await closedSessions(env.DB, madridDay(now));
     return text(toCsv(sessions), 'text/csv; charset=utf-8', {
       cache: 'public, max-age=600',
       headers: { 'Content-Disposition': 'attachment; filename="la-bola-negra-historico.csv"' },
     });
-  },
+  }),
 };
 
 export async function handle(request, env, now = new Date()) {

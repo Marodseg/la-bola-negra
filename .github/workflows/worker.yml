@@ -41,9 +41,9 @@ jobs:
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: steps.config.outputs.ready == 'true'
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: steps.config.outputs.ready == 'true'
         with:
           node-version-file: .nvmrc
@@ -65,7 +65,7 @@ jobs:
 
       - name: Aplicar migraciones de la base de datos
         if: steps.config.outputs.ready == 'true'
-        run: npx wrangler d1 migrations apply la-bola-negra --remote --config worker/wrangler.toml
+        run: npx wrangler d1 migrations apply la-bola-negra --remote --config worker/wrangler.toml --env ""
 
       - name: Desplegar
         if: steps.config.outputs.ready == 'true'
@@ -76,14 +76,14 @@ jobs:
           args=()
           [ -n "$ALLOWED_ORIGINS" ] && args+=(--var "ALLOWED_ORIGINS:$ALLOWED_ORIGINS")
           [ -n "$TURNSTILE_SITE_KEY" ] && args+=(--var "TURNSTILE_SITE_KEY:$TURNSTILE_SITE_KEY")
-          npx wrangler deploy --config worker/wrangler.toml "${args[@]}"
+          npx wrangler deploy --config worker/wrangler.toml --env "" "${args[@]}"
 
       - name: Subir secretos
         if: steps.config.outputs.ready == 'true'
         run: |
-          printf '%s' "$HASH_SECRET" | npx wrangler secret put HASH_SECRET --config worker/wrangler.toml
+          printf '%s' "$HASH_SECRET" | npx wrangler secret put HASH_SECRET --config worker/wrangler.toml --env ""
           if [ -n "$TURNSTILE_SECRET" ]; then
-            printf '%s' "$TURNSTILE_SECRET" | npx wrangler secret put TURNSTILE_SECRET --config worker/wrangler.toml
+            printf '%s' "$TURNSTILE_SECRET" | npx wrangler secret put TURNSTILE_SECRET --config worker/wrangler.toml --env ""
           fi
 
       # La web lleva la URL de la API dentro: se recompila tras cada despliegue de la API.

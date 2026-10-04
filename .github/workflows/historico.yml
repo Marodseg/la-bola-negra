@@ -38,7 +38,7 @@ jobs:
             echo "url=${API_URL%/}" >> "$GITHUB_OUTPUT"
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: steps.api.outputs.ready == 'true'
       - name: Descargar actas
         if: steps.api.outputs.ready == 'true'

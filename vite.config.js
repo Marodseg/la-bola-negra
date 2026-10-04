@@ -60,6 +60,10 @@ export default defineConfig(({ mode }) => {
           let out = siteUrl
             ? html.replaceAll('%SITE_URL%', siteUrl)
             : html.split('\n').filter((line) => !line.includes('%SITE_URL%')).join('\n');
+          // La página 404 se sirve en cualquier ruta: con <base> sus recursos se cargan siempre desde la raíz.
+          if (siteUrl && ctx.filename.endsWith('404.html')) {
+            out = out.replace('<meta charset="utf-8">', `<meta charset="utf-8">\n  <base href="${new URL(siteUrl).pathname.replace(/\/?$/, '/')}">`);
+          }
           // La CSP solo en producción: en desarrollo Vite inyecta estilos y scripts en línea.
           if (!ctx.server) {
             out = out.replace('<meta charset="utf-8">', `<meta charset="utf-8">\n  <meta http-equiv="Content-Security-Policy" content="${csp}">`);

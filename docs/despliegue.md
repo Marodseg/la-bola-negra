@@ -25,7 +25,7 @@ Si la cuenta de Cloudflare es nueva, entra una vez en **Workers & Pages** en el 
 
 ## 3. Token de API de Cloudflare
 
-En [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens) → **Create Token** → plantilla **Edit Cloudflare Workers**. Añade también el permiso **Account · D1 · Edit**. Guarda el token: solo se muestra una vez.
+En [dash.cloudflare.com/profile/api-tokens](https://dash.cloudflare.com/profile/api-tokens) → **Create Token** → plantilla **Edit Cloudflare Workers**. Añade también los permisos **Account · D1 · Edit** y **Account · Workers AI · Read** (este último solo lo usa el flujo «Probar IA»). En *Account Resources* elige tu cuenta; deja vacíos *Client IP Address Filtering* y *TTL*. Guarda el token: solo se muestra una vez.
 
 Tu **Account ID** aparece en la página principal de **Workers & Pages**, en la columna de la derecha.
 
@@ -54,16 +54,18 @@ La web queda en `https://marodseg.github.io/la-bola-negra/`.
 
 Las variables `API_URL` y `SITE_URL` del repositorio son opcionales: solo hacen falta si cambias de dominio.
 
-## 6. Protección anti-bots (opcional, recomendado)
+## 6. Protección anti-bots (recomendado)
 
 [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) comprueba que quien vota no es un programa, sin cookies y casi siempre sin que la persona note nada.
 
-1. Panel de Cloudflare → **Turnstile → Add widget**. Dominio: `marodseg.github.io`. Modo: *Managed*.
-2. Variable del repositorio `TURNSTILE_SITE_KEY` = la *site key* (es pública).
-3. Secreto del repositorio `TURNSTILE_SECRET` = la *secret key*.
+1. Panel de Cloudflare → **Turnstile → Add widget manually** (no hace falta «Spin»: la integración ya está hecha).
+   - *Hostnames*: `marodseg.github.io` (sin `https://` ni ruta).
+   - *Widget Mode*: **Managed**. *Pre-clearance*: **No**.
+2. Variable del repositorio (pestaña *Variables*) `TURNSTILE_SITE_KEY` = la *site key* (es pública).
+3. Secreto del repositorio (pestaña *Secrets*) `TURNSTILE_SECRET` = la *secret key*.
 4. Vuelve a ejecutar **Desplegar API**.
 
-Desde ese momento la API exige el token de Turnstile en cada voto.
+Desde ese momento la API exige el token de Turnstile en cada voto. Casi nadie verá nada; si Cloudflare pide marcar la casilla, la web lo indica antes de dejar votar. Si un voto se rechaza, el aviso incluye el código de error de Cloudflare.
 
 ## 7. Dominio propio (opcional)
 
@@ -99,6 +101,8 @@ La pregunta se elige la víspera, a las 20:00 UTC, así que hay que subirla ante
 npx wrangler d1 execute la-bola-negra --remote --config worker/wrangler.toml \
   --command "SELECT day, number, source, text FROM questions ORDER BY day DESC LIMIT 10"
 ```
+
+**Comprobar la IA.** *Actions → Probar IA → Run workflow* genera cinco preguntas con el modelo real y los mismos filtros que la API.
 
 **Ver los registros del Worker en directo.**
 
