@@ -5,12 +5,12 @@ Una pregunta al día para toda España. Cada persona echa **una bola** en la urn
 - ⚪ **Bola blanca**: sí
 - ⚫ **Bola negra**: no
 
-La urna es de cristal esmerilado mientras no hayas votado, así que nadie puede dejarse influir. Al echar tu bola, el cristal se aclara y las bolas del resto de España caen dentro con física real. Puedes ver la tuya marcada con un aro dorado.
+Mientras no hayas votado, la urna está llena de humo y no se ve nada, así que nadie puede dejarse influir. Al echar tu bola, el humo se disipa y las bolas del resto de España caen dentro con física real. La tuya aparece marcada con un aro dorado.
 
 ## Cómo funciona
 
 - **Una pregunta por día**, que cambia a medianoche (hora peninsular, `Europe/Madrid`).
-- **Un voto por persona y pregunta.** El voto se ata a una cookie firmada y a un identificador del dispositivo, y además hay un tope de votos por IP y día (`BN_MAX_VOTOS_POR_IP`, 25 por defecto, pensado para casas y oficinas que comparten conexión). No hace falta registrarse.
+- **Un voto por persona y pregunta.** El voto se ata a una cookie firmada y a un identificador del dispositivo, y además hay un tope de votos por IP y día (`BN_MAX_VOTOS_POR_IP`, 5 por defecto, para que una casa que comparte conexión pueda votar entera). No hace falta registrarse.
 - **Resultados ocultos hasta votar.** La API no los devuelve hasta que has votado.
 - **Archivo** con los resultados de los días anteriores.
 - Bolas que se pueden **arrastrar** hasta la urna o **tocar dos veces**, con sonido sintetizado de choque entre bolas y vibración en móvil.
@@ -18,7 +18,9 @@ La urna es de cristal esmerilado mientras no hayas votado, así que nadie puede 
 ## Tecnología
 
 - **Node.js 22.13 o superior** + Express. Los votos se guardan en SQLite con el módulo `node:sqlite` que trae Node, así que no hay dependencias nativas.
-- Frontend sin framework: HTML, CSS y JS. La física de las bolas va con [matter.js](https://brm.io/matter-js/) y se dibuja en un `<canvas>`.
+- Frontend sin framework: HTML, CSS y JS.
+- La urna es una escena 3D con [Three.js](https://threejs.org/): cristal con reflejos, bolas con acabado brillante e iluminación de estudio. La física de las bolas va con [cannon-es](https://pmndrs.github.io/cannon-es/), así que caen, rebotan y se apilan de verdad.
+- Si el navegador no tiene WebGL, la votación funciona igual, aunque sin la urna animada.
 
 ## Arrancar en local
 
@@ -54,7 +56,7 @@ Formula las preguntas para que se respondan con sí o no. Ojo: si cambias el ord
 | `PORT` | `3000` | Puerto HTTP |
 | `BN_DATA_DIR` | `./data` | Dónde se guardan la base de datos y el secreto |
 | `BN_SECRET` | se genera solo | Secreto para firmar las cookies de los votantes |
-| `BN_MAX_VOTOS_POR_IP` | `25` | Votos máximos por IP y día |
+| `BN_MAX_VOTOS_POR_IP` | `5` | Votos máximos por IP y día |
 | `BN_QUESTIONS` | `./questions.json` | Archivo de preguntas |
 | `TRUST_PROXY` | (sin valor) | Ponlo a `1` si hay un proxy delante (Render, Fly, nginx...) para leer la IP real |
 

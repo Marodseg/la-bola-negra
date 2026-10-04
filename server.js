@@ -24,7 +24,7 @@ const app = createApp({
   db,
   questions,
   secret: loadSecret(),
-  maxVotesPerIp: Number(process.env.BN_MAX_VOTOS_POR_IP ?? 25),
+  maxVotesPerIp: Number(process.env.BN_MAX_VOTOS_POR_IP ?? 5),
   // Detrás de un proxy (Render, Fly, nginx...) pon TRUST_PROXY=1 para leer la IP real.
   trustProxy: process.env.TRUST_PROXY ? Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY : false,
 });

@@ -16,7 +16,7 @@ const ONE_YEAR_S = 60 * 60 * 24 * 365;
  * @param {number} [opts.maxVotesPerIp]  tope de votos por IP y día (familias, oficinas...)
  * @param {() => Date} [opts.now]
  */
-export function createApp({ db, questions, secret, maxVotesPerIp = 25, now = () => new Date(), trustProxy = false }) {
+export function createApp({ db, questions, secret, maxVotesPerIp = 5, now = () => new Date(), trustProxy = false }) {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', trustProxy);
@@ -70,11 +70,14 @@ export function createApp({ db, questions, secret, maxVotesPerIp = 25, now = () 
     if (!question) return res.status(404).json({ error: 'Todavía no hay preguntas. ¡Vuelve pronto!' });
 
     const myBall = db.findVote(day, voterId(req, res), deviceId(req));
+    const results = db.tally(day);
     res.set('Cache-Control', 'no-store').json({
       question,
       myBall,
+      // El total de votos sí se enseña siempre; el reparto, no.
+      totalVotes: results.total,
       // Los resultados solo se ven después de votar, para no influir en nadie.
-      results: myBall ? db.tally(day) : null,
+      results: myBall ? results : null,
       nextInMs: msUntilNextDay(now()),
     });
   });
@@ -127,9 +130,10 @@ export function createApp({ db, questions, secret, maxVotesPerIp = 25, now = () 
   app.use('/api', (req, res) => res.status(404).json({ error: 'No existe.' }));
 
   const root = path.resolve(import.meta.dirname, '..');
-  app.get('/vendor/matter.min.js', (req, res) => {
-    res.sendFile(path.join(root, 'node_modules/matter-js/build/matter.min.js'), { maxAge: '7d' });
-  });
+  const vendor = { maxAge: '7d', index: false };
+  app.use('/vendor/three', express.static(path.join(root, 'node_modules/three/build'), vendor));
+  app.use('/vendor/three-addons', express.static(path.join(root, 'node_modules/three/examples/jsm'), vendor));
+  app.use('/vendor/cannon-es', express.static(path.join(root, 'node_modules/cannon-es/dist'), vendor));
   app.use(express.static(path.join(root, 'public'), { maxAge: '1h' }));
 
   return app;

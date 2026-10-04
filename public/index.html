@@ -6,99 +6,144 @@
   <title>La Bola Negra</title>
   <meta name="description" content="Una pregunta al día para toda España. Bola blanca o bola negra. Un voto por persona.">
   <meta name="author" content="Marodseg - Manuel Ángel Rodríguez Segura">
-  <meta name="theme-color" content="#0c0a09">
+  <meta name="theme-color" content="#060606">
   <meta property="og:title" content="La Bola Negra">
   <meta property="og:description" content="Una pregunta al día para toda España. ¿Bola blanca o bola negra?">
   <meta property="og:type" content="website">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+    { "imports": { "three": "/vendor/three/three.module.js", "three/addons/": "/vendor/three-addons/" } }
+  </script>
 </head>
 <body>
-  <div class="spotlight" aria-hidden="true"></div>
+  <div class="bg" aria-hidden="true">
+    <div class="glow glow--a"></div>
+    <div class="glow glow--b"></div>
+    <div class="grain"></div>
+  </div>
 
-  <header class="top">
-    <a class="logo" href="/" aria-label="La Bola Negra, inicio">
-      <span class="logo-ball" aria-hidden="true"></span>
-      <span>La Bola <em>Negra</em></span>
+  <header class="nav">
+    <a class="brand" href="/" aria-label="La Bola Negra, inicio">
+      <span class="brand-ball" aria-hidden="true"></span>
+      <span class="brand-name">la bola <i>negra</i></span>
     </a>
-    <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true" aria-label="Sonido">
-      <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-      <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-    </button>
+    <div class="nav-right">
+      <span class="live" id="live" hidden><span class="pulse" aria-hidden="true"></span><b id="live-count">0</b>&nbsp;<span id="live-word">votos hoy</span></span>
+      <button class="icon-btn" id="sound-toggle" type="button" aria-pressed="true" aria-label="Silenciar">
+        <svg class="on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <svg class="off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
   </header>
 
   <main>
-    <section class="today" aria-labelledby="question">
-      <p class="meta" id="meta">&nbsp;</p>
-      <h1 class="question" id="question">Preparando la urna…</h1>
-
-      <div class="stage">
-        <canvas class="urn" id="urn" aria-label="Urna de votación" role="img"></canvas>
+    <section class="hero" aria-labelledby="question">
+      <div class="hero-head">
+        <p class="eyebrow" id="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span><span id="date">Hoy</span></p>
+        <h1 class="question" id="question"><span class="question-loading">Preparando la urna…</span></h1>
       </div>
 
-      <div class="vote" id="vote" hidden>
-        <div class="tray" role="group" aria-label="Elige tu bola">
-          <div class="slot">
-            <button class="ball ball--blanca" type="button" data-ball="blanca" aria-label="Echar bola blanca: sí"></button>
-            <span class="slot-label"><strong>Blanca</strong> Sí</span>
-          </div>
-          <div class="slot">
-            <button class="ball ball--negra" type="button" data-ball="negra" aria-label="Echar bola negra: no"></button>
-            <span class="slot-label"><strong>Negra</strong> No</span>
+      <div class="hero-stage">
+        <div class="stage" id="stage">
+          <div class="secret" id="secret" hidden>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            Urna secreta
           </div>
         </div>
-        <p class="hint" id="hint">Arrastra tu bola hasta la urna, o tócala dos veces.</p>
       </div>
 
-      <div class="results" id="results" hidden aria-live="polite">
-        <p class="verdict" id="verdict"></p>
-        <div class="tally">
-          <div class="side side--blanca">
-            <span class="mini mini--blanca" aria-hidden="true"></span>
-            <span class="pct" id="pct-blanca">0%</span>
-            <span class="count"><b id="count-blanca">0</b> bolas blancas</span>
+      <div class="hero-action">
+        <div class="vote" id="vote" hidden>
+          <div class="choices" role="group" aria-label="Elige tu bola">
+            <div class="choice">
+              <button class="ball ball--blanca" type="button" data-ball="blanca" aria-label="Echar bola blanca: sí"></button>
+              <span class="choice-shadow" aria-hidden="true"></span>
+              <span class="choice-word">Sí</span>
+              <span class="choice-sub">Bola blanca</span>
+            </div>
+            <span class="choices-or" aria-hidden="true">o</span>
+            <div class="choice">
+              <button class="ball ball--negra" type="button" data-ball="negra" aria-label="Echar bola negra: no"></button>
+              <span class="choice-shadow" aria-hidden="true"></span>
+              <span class="choice-word">No</span>
+              <span class="choice-sub">Bola negra</span>
+            </div>
           </div>
-          <div class="side side--negra">
-            <span class="mini mini--negra" aria-hidden="true"></span>
-            <span class="pct" id="pct-negra">0%</span>
-            <span class="count"><b id="count-negra">0</b> bolas negras</span>
+          <p class="hint" id="hint">Arrastra tu bola a la urna, o tócala dos veces.</p>
+        </div>
+
+        <div class="results" id="results" hidden aria-live="polite">
+          <div class="results-top">
+            <span class="chip"><span class="pulse" aria-hidden="true"></span>En directo</span>
+            <span class="chip chip--mine" id="mine-chip"></span>
+          </div>
+          <p class="verdict" id="verdict"></p>
+          <div class="split">
+            <div class="split-side side--blanca">
+              <span class="split-pct"><span id="pct-blanca">0</span><small>%</small></span>
+              <span class="split-label"><span class="dot dot--blanca" aria-hidden="true"></span>Sí · <b id="count-blanca">0</b></span>
+            </div>
+            <div class="split-side side--negra">
+              <span class="split-pct"><span id="pct-negra">0</span><small>%</small></span>
+              <span class="split-label"><span class="dot dot--negra" aria-hidden="true"></span>No · <b id="count-negra">0</b></span>
+            </div>
+          </div>
+          <div class="bar" aria-hidden="true"><span class="bar-blanca" id="bar-blanca"></span><span class="bar-negra" id="bar-negra"></span></div>
+          <p class="fine" id="fine"></p>
+          <div class="results-foot">
+            <button class="btn" id="share" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Compartir
+            </button>
+            <div class="countdown">
+              <span>Siguiente pregunta</span>
+              <time id="countdown">--:--:--</time>
+            </div>
           </div>
         </div>
-        <div class="bar" aria-hidden="true"><span class="bar-blanca" id="bar-blanca"></span><span class="bar-negra" id="bar-negra"></span></div>
-        <p class="fine" id="fine"></p>
-        <div class="actions">
-          <button class="btn" id="share" type="button">Compartir la pregunta</button>
-        </div>
-        <p class="next">Próxima pregunta en <time id="countdown">--:--:--</time></p>
       </div>
     </section>
 
-    <section class="archive" aria-labelledby="archive-title">
-      <h2 id="archive-title">Votaciones anteriores</h2>
-      <ol class="archive-list" id="archive"></ol>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Una pregunta al día</span><i></i><span>Toda España</span><i class="w"></i><span>Un solo voto</span><i></i><span>Bola blanca o bola negra</span><i class="w"></i>
+        <span>Una pregunta al día</span><i></i><span>Toda España</span><i class="w"></i><span>Un solo voto</span><i></i><span>Bola blanca o bola negra</span><i class="w"></i>
+      </div>
+    </div>
+
+    <section class="section" aria-labelledby="archive-title">
+      <div class="section-head">
+        <p class="kicker">Archivo</p>
+        <h2 id="archive-title">Lo que ya ha decidido <i>España</i></h2>
+      </div>
+      <ol class="archive" id="archive"></ol>
     </section>
 
-    <section class="how" aria-labelledby="how-title">
-      <h2 id="how-title">Cómo funciona</h2>
+    <section class="section" aria-labelledby="how-title">
+      <div class="section-head">
+        <p class="kicker">Las reglas</p>
+        <h2 id="how-title">Simple. Secreto. <i>Una vez.</i></h2>
+      </div>
       <ol class="steps">
-        <li><span class="step-n">1</span><p><strong>Una pregunta al día.</strong> A medianoche (hora peninsular) la urna se vacía y llega una pregunta nueva para toda España.</p></li>
-        <li><span class="step-n">2</span><p><strong>Echa tu bola.</strong> Blanca es sí, negra es no. Solo puedes votar una vez por pregunta y no hay vuelta atrás.</p></li>
-        <li><span class="step-n">3</span><p><strong>La urna es secreta.</strong> No verás cómo va la votación hasta que eches tu bola. Así nadie se deja influir.</p></li>
+        <li><span class="step-n">01</span><h3>Una pregunta al día</h3><p>A medianoche (hora peninsular) la urna se vacía y llega una pregunta nueva para toda España.</p></li>
+        <li><span class="step-n">02</span><h3>Echa tu bola</h3><p>Blanca es sí, negra es no. Solo puedes votar una vez por pregunta y no hay vuelta atrás.</p></li>
+        <li><span class="step-n">03</span><h3>La urna es secreta</h3><p>No verás cómo va la votación hasta que eches tu bola. Así nadie se deja influir.</p></li>
       </ol>
     </section>
   </main>
 
   <footer class="foot">
+    <a class="brand" href="/"><span class="brand-ball" aria-hidden="true"></span><span class="brand-name">la bola <i>negra</i></span></a>
     <p>Voto anónimo · No es una encuesta científica</p>
-    <p>Hecho por <strong>Marodseg</strong> · Manuel Ángel Rodríguez Segura</p>
+    <p>Hecho por <b>Marodseg</b> · Manuel Ángel Rodríguez Segura</p>
   </footer>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="/vendor/matter.min.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

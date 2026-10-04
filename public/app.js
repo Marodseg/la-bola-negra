@@ -1,4 +1,4 @@
-import { createUrn, MAX_BALLS } from './urn.js';
+import { createUrn, MAX_BALLS } from './urn3d.js';
 import { clack, setSoundEnabled, unlockSound } from './sound.js';
 
 const $ = (id) => document.getElementById(id);
@@ -89,15 +89,35 @@ document.addEventListener('pointerdown', unlockSound, { passive: true });
 // ---------- Urna ----------
 
 let buzzed = false;
-const urn = createUrn($('urn'), {
+const stage = $('stage');
+const urn = createUrn(stage, {
   onImpact(intensity, { mine }) {
     clack(intensity, mine ? 0.75 : 1);
     if (mine && !buzzed) {
       buzzed = true;
-      navigator.vibrate?.(14);
+      try { navigator.vibrate?.(14); } catch { /* sin vibración */ }
     }
   },
-});
+}) ?? fallbackUrn();
+
+/** Sin WebGL: la votación funciona igual, solo sin la urna animada. */
+function fallbackUrn() {
+  stage.classList.add('no-webgl');
+  return {
+    target() {
+      const r = stage.getBoundingClientRect();
+      return {
+        mouth: { x: r.left + r.width / 2, y: r.top + r.height * 0.2 },
+        radius: 14,
+        box: { left: r.left, right: r.right, top: r.top, bottom: r.bottom },
+      };
+    },
+    drop() {},
+    pourTo() { return Promise.resolve(); },
+    removeMine() {},
+    setFrost() {},
+  };
+}
 
 /** Cuántas bolas de cada color caben en la urna para representar el resultado. */
 function displayCounts(r) {
@@ -119,13 +139,25 @@ const shortDateFmt = new Intl.DateTimeFormat('es-ES', { weekday: 'short', day: '
 const asDate = (day) => new Date(`${day}T12:00:00Z`);
 
 function renderQuestion(q) {
-  const meta = $('meta');
-  meta.replaceChildren(`${dateFmt.format(asDate(q.day))} · Nº ${q.number}`);
-  if (q.tag) meta.append(' ', h('span', { class: 'tag' }, q.tag));
-  const title = $('question');
-  title.textContent = q.text;
-  requestAnimationFrame(() => title.classList.add('in'));
+  const date = dateFmt.format(asDate(q.day));
+  $('date').replaceChildren(
+    h('b', {}, date.charAt(0).toUpperCase() + date.slice(1)),
+    h('span', { class: 'sep' }), `Pregunta nº ${q.number}`,
+    ...(q.tag ? [h('span', { class: 'sep' }), q.tag] : []),
+  );
+  // Las palabras entran una a una, desenfocándose.
+  const words = q.text.split(/\s+/);
+  $('question').replaceChildren(...words.flatMap((word, i) => [
+    h('span', { class: 'w', style: `animation-delay:${120 + i * 70}ms` }, word),
+    ...(i < words.length - 1 ? [' '] : []),
+  ]));
   document.title = `${q.text} · La Bola Negra`;
+}
+
+function renderLive(total) {
+  $('live').hidden = false;
+  $('live-count').textContent = fmt.format(total);
+  $('live-word').textContent = total === 1 ? 'voto hoy' : 'votos hoy';
 }
 
 // ---------- Resultados ----------
@@ -159,27 +191,30 @@ function renderResults(r, ms = 1600) {
   const { pb, pn } = percents(r);
   animateNumber('blanca', $('count-blanca'), r.blanca, ms);
   animateNumber('negra', $('count-negra'), r.negra, ms);
-  animateNumber('pb', $('pct-blanca'), pb, ms, '%');
-  animateNumber('pn', $('pct-negra'), pn, ms, '%');
+  animateNumber('pb', $('pct-blanca'), pb, ms);
+  animateNumber('pn', $('pct-negra'), pn, ms);
   $('bar-blanca').style.width = `${r.total ? (100 * r.blanca) / r.total : 50}%`;
   $('bar-negra').style.width = `${r.total ? (100 * r.negra) / r.total : 50}%`;
 
-  document.querySelector('.side--blanca').classList.toggle('lead', r.blanca > r.negra);
-  document.querySelector('.side--negra').classList.toggle('lead', r.negra > r.blanca);
+  document.querySelector('.side--blanca').classList.toggle('lead', r.blanca >= r.negra);
+  document.querySelector('.side--negra').classList.toggle('lead', r.negra >= r.blanca);
+  document.body.classList.toggle('winner-blanca', r.blanca > r.negra);
+  document.body.classList.toggle('winner-negra', r.negra > r.blanca);
 
-  let verdict;
-  if (r.total <= 1) verdict = 'Tu bola es la primera de hoy.';
-  else if (r.blanca === r.negra) verdict = 'Empate: la urna está partida en dos.';
-  else if (r.blanca > r.negra) verdict = 'Gana la bola blanca. España dice sí.';
-  else verdict = 'Gana la bola negra. España dice no.';
-  $('verdict').textContent = verdict;
+  const verdict = $('verdict');
+  if (r.total <= 1) verdict.replaceChildren('Tu bola es ', h('i', {}, 'la primera'), ' de hoy.');
+  else if (r.blanca === r.negra) verdict.replaceChildren('Empate. ', h('i', {}, 'España está partida en dos.'));
+  else if (r.blanca > r.negra) verdict.replaceChildren('Gana la bola blanca. ', h('i', {}, 'España dice sí.'));
+  else verdict.replaceChildren('Gana la bola negra. ', h('i', {}, 'España dice no.'));
 
-  const fine = $('fine');
-  fine.replaceChildren(
-    'Tu bola: ', h('b', {}, COLOR_NAME[state.myBall] ?? '—'),
-    ` · ${fmt.format(r.total)} ${r.total === 1 ? 'voto' : 'votos'} en total`,
-  );
-  if (r.total > MAX_BALLS) fine.append(` · cada bola ≈ ${fmt.format(Math.round(r.total / MAX_BALLS))} votos`);
+  const chip = $('mine-chip');
+  chip.textContent = `Tu bola: ${COLOR_NAME[state.myBall] ?? '—'}`;
+  chip.style.setProperty('--mine-bg', state.myBall === 'blanca' ? '#f2efe8' : '#050505');
+
+  let fine = `${fmt.format(r.total)} ${r.total === 1 ? 'persona ha votado' : 'personas han votado'} hoy`;
+  if (r.total > MAX_BALLS) fine += ` · cada bola de la urna ≈ ${fmt.format(Math.round(r.total / MAX_BALLS))} votos`;
+  $('fine').textContent = fine;
+  renderLive(r.total);
 }
 
 async function reveal(results, myBall, { fresh }) {
@@ -192,7 +227,8 @@ async function reveal(results, myBall, { fresh }) {
     setTimeout(() => { vote.hidden = true; }, 400);
   }
 
-  urn.setFrost(0, reducedMotion ? 1 : 1400);
+  $('secret').classList.add('out');
+  urn.setFrost(0, reducedMotion ? 1 : 1600);
   await wait(reducedMotion ? 0 : fresh ? 900 : 300);
 
   const target = displayCounts(results);
@@ -207,7 +243,7 @@ async function reveal(results, myBall, { fresh }) {
 
 // ---------- Votar ----------
 
-const tray = document.querySelector('.tray');
+const tray = document.querySelector('.choices');
 let armed = null;
 let lastDragEnd = 0;
 
@@ -216,7 +252,7 @@ function setHint(text) { $('hint').textContent = text; }
 function disarm() {
   armed?.classList.remove('armed');
   armed = null;
-  setHint('Arrastra tu bola hasta la urna, o tócala dos veces.');
+  setHint('Arrastra tu bola a la urna, o tócala dos veces.');
 }
 
 function centerOf(el) {
@@ -320,7 +356,7 @@ async function throwBall(ball, clone = makeClone(ball)) {
   urn.removeMine();
   ball.classList.remove('gone');
   tray.classList.remove('disabled');
-  setHint('Arrastra tu bola hasta la urna, o tócala dos veces.');
+  setHint('Arrastra tu bola a la urna, o tócala dos veces.');
   state.busy = false;
 }
 
@@ -422,12 +458,13 @@ function startLiveUpdates() {
       location.reload();
       return;
     }
-    if (data.results && data.results.total !== state.results.total) {
+    renderLive(data.totalVotes);
+    if (state.myBall && data.results && data.results.total !== state.results.total) {
       state.results = data.results;
       renderResults(data.results, 900);
       urn.pourTo(displayCounts(data.results), { duration: 1500 });
     }
-  }, 20_000);
+  }, 15_000);
 }
 
 // ---------- Compartir ----------
@@ -460,16 +497,18 @@ async function loadArchive() {
   list.replaceChildren(...data.items.map((item) => {
     const r = item.results;
     const { pb, pn } = percents(r);
+    // 60 puntos: cada uno es un 1,67 % de los votos.
+    const DOTS = 60;
+    const white = r.total ? Math.round((DOTS * r.blanca) / r.total) : 0;
+    const dots = Array.from({ length: DOTS }, (_, i) => h('span', { class: !r.total ? 'e' : i < white ? 'b' : 'n' }));
+    const winner = r.blanca === r.negra ? 'Empate' : r.blanca > r.negra ? 'Sí' : 'No';
     return h('li', { class: 'arch' },
       h('div', { class: 'arch-head' }, h('span', {}, shortDateFmt.format(asDate(item.day))), h('span', {}, `Nº ${item.number}`)),
       h('p', { class: 'arch-q' }, item.text),
-      h('div', { class: 'bar' },
-        h('span', { class: 'bar-blanca', style: `width:${r.total ? pb : 50}%` }),
-        h('span', { class: 'bar-negra', style: `width:${r.total ? pn : 50}%` })),
+      h('div', { class: 'dots', 'aria-hidden': 'true' }, dots),
       h('div', { class: 'arch-foot' },
-        h('span', { class: 'who' }, h('span', { class: 'mini mini--blanca' }), `${pb}%`),
-        h('span', {}, `${fmt.format(r.total)} ${r.total === 1 ? 'voto' : 'votos'}`),
-        h('span', { class: 'who' }, `${pn}%`, h('span', { class: 'mini mini--negra' }))),
+        h('span', { class: 'big' }, r.total ? `${Math.max(pb, pn)}%` : '—', h('small', {}, r.total ? winner : 'Sin votos')),
+        h('span', { class: 'total' }, `${fmt.format(r.total)} ${r.total === 1 ? 'voto' : 'votos'}`)),
       item.myBall ? h('span', { class: 'arch-mine' }, `Tu bola: ${COLOR_NAME[item.myBall]}`) : null,
     );
   }));
@@ -480,20 +519,21 @@ async function loadArchive() {
 async function init() {
   const { ok, data } = await api('/api/hoy');
   if (!ok) {
-    const title = $('question');
-    title.textContent = data.error ?? 'No se ha podido abrir la urna.';
-    title.classList.add('in');
+    $('question').replaceChildren(h('span', { class: 'question-loading' }, data.error ?? 'No se ha podido abrir la urna.'));
     return;
   }
   state.day = data.question.day;
   state.question = data.question;
   renderQuestion(data.question);
   startCountdown(data.nextInMs);
+  renderLive(data.totalVotes);
+  startLiveUpdates();
 
   if (data.myBall) {
     reveal(data.results, data.myBall, { fresh: false });
   } else {
     $('vote').hidden = false;
+    $('secret').hidden = false;
     setupTray();
   }
   loadArchive();

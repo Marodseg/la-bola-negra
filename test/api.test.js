@@ -60,6 +60,7 @@ test('los resultados se ocultan hasta votar y solo se vota una vez', async () =>
   assert.equal(res.status, 200);
   assert.equal(res.data.question.day, '2026-10-04');
   assert.equal(res.data.results, null);
+  assert.equal(res.data.totalVotes, 0);
 
   res = await ana('/api/votar', { ball: 'gris' });
   assert.equal(res.status, 400);
