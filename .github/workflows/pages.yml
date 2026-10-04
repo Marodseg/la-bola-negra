@@ -50,7 +50,7 @@ jobs:
             echo "site=${site%/}" >> "$GITHUB_OUTPUT"
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: steps.api.outputs.ready == 'true'
       - uses: actions/setup-node@v4
         if: steps.api.outputs.ready == 'true'
