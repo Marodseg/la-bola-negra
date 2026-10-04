@@ -15,7 +15,7 @@ En los casinos y círculos de los años treinta, la admisión de un socio se vot
 
 1. **Una proposición al día.** A medianoche (hora peninsular) se cierra la votación anterior y se abre otra.
 2. **Una bola por persona.** Se arrastra la bola hasta la urna, o se pulsa dos veces. No hay vuelta atrás.
-3. **Escrutinio secreto.** La urna permanece cerrada hasta que votas. Entonces se abre la portezuela, caen las bolas del resto de España y se levanta el acta, con su sello.
+3. **Escrutinio secreto.** La urna permanece cerrada hasta que votas. Entonces se abre la portezuela, caen las bolas del resto de España y se levanta el acta, con su sello. La urna se puede girar arrastrándola con el ratón o con el dedo.
 4. **Libro de actas.** Todas las sesiones quedan registradas en la web y se pueden descargar en CSV y JSON. Cada noche, además, se guarda una copia en [`historico/`](historico/).
 
 <p align="center">
@@ -55,8 +55,8 @@ Unas 20.000 visitas al día caben de sobra. Si algún día se queda corto, el pl
 Nunca falta una pregunta. Para cada día se elige, por este orden:
 
 1. **Editorial**: una pregunta fijada para esa fecha (Nochebuena, Nochevieja…).
-2. **Banco**: la siguiente de un banco de preguntas escritas a mano, sin repetir.
-3. **IA**: cuando el banco se agota, un modelo gratuito de Workers AI propone una nueva. Antes de publicarse pasa unos filtros: debe ser una pregunta de sí o no, de 25 a 130 caracteres, de una categoría permitida, sin temas vetados (partidos, políticos, religión, violencia…) y sin parecerse a ninguna anterior.
+2. **Banco**: la siguiente de un banco de 182 preguntas escritas a mano (unos seis meses), sin repetir.
+3. **IA**: cuando el banco se agota, un modelo gratuito de Workers AI propone una nueva. Antes de publicarse pasa unos filtros (pregunta de sí o no, de 25 a 130 caracteres, categoría permitida, sin temas vetados como partidos, políticos, religión o violencia, y sin parecerse a ninguna anterior) y una segunda pasada en la que el modelo la revisa como un corrector de estilo.
 4. **Reciclada**: si la IA falla, vuelve la pregunta del banco que lleva más tiempo sin salir.
 
 El banco y las fechas fijas están en [`worker/src/questions/banco.json`](worker/src/questions/banco.json). El flujo manual **Probar IA** genera preguntas con el modelo real y los mismos filtros, para comprobar en cualquier momento que la IA responde bien.

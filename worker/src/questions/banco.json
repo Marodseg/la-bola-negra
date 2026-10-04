@@ -357,6 +357,390 @@
     {
       "text": "¿Crees que tus hijos vivirán mejor que tú?",
       "category": "Sociedad"
+    },
+    {
+      "text": "¿Deberían los bares poder poner música en directo hasta medianoche entre semana?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es mejor desayunar dulce que salado?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los niños tener clases de cocina en el colegio?",
+      "category": "Educación"
+    },
+    {
+      "text": "¿Pagarías una suscripción por leer tu periódico favorito?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Te parece bien que los restaurantes cobren el pan aunque no lo pidas?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Debería haber más carriles bici aunque se quiten plazas de aparcamiento?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es la tortilla de patatas el mejor plato de la cocina española?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían las rebajas durar todo el año sin fechas fijas?",
+      "category": "Economía"
+    },
+    {
+      "text": "¿Volverías a usar cabinas telefónicas si las hubiera en cada esquina?",
+      "category": "Tecnología"
+    },
+    {
+      "text": "¿Es mejor ver el fútbol en el bar que en casa?",
+      "category": "Deporte"
+    },
+    {
+      "text": "¿Deberían los institutos empezar las clases a las nueve de la mañana?",
+      "category": "Educación"
+    },
+    {
+      "text": "¿Te gustaría poder trabajar desde un pueblo con buena conexión a internet?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Debería prohibirse la venta de bebidas energéticas a menores?",
+      "category": "Salud"
+    },
+    {
+      "text": "¿Es aceptable mandar audios de más de dos minutos por mensajería?",
+      "category": "Vida"
+    },
+    {
+      "text": "¿Deberían las fiestas de los pueblos acabar antes por el descanso de los vecinos?",
+      "category": "Tradiciones"
+    },
+    {
+      "text": "¿Merece la pena pagar más por fruta de temporada y de cercanía?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Es mejor viajar en tren que en avión para trayectos de menos de cuatro horas?",
+      "category": "Transporte"
+    },
+    {
+      "text": "¿Deberían los coches eléctricos pagar menos impuestos que los de gasolina?",
+      "category": "Energía"
+    },
+    {
+      "text": "¿Te parece bien que los conciertos prohíban grabar con el móvil?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Debería ser obligatorio saber primeros auxilios para sacarse el carné de conducir?",
+      "category": "Salud"
+    },
+    {
+      "text": "¿Es la siesta una costumbre que se está perdiendo?",
+      "category": "Tradiciones"
+    },
+    {
+      "text": "¿Deberían los museos abrir por la noche al menos un día a la semana?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Es mejor comprar en el comercio de barrio que en grandes superficies?",
+      "category": "Economía"
+    },
+    {
+      "text": "¿Deberían las empresas dar el día libre por el cumpleaños?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Te parece bien que las tiendas solo acepten pago con tarjeta?",
+      "category": "Economía"
+    },
+    {
+      "text": "¿Debería haber más fuentes de agua potable en las calles?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es el turrón imprescindible en Navidad?",
+      "category": "Tradiciones"
+    },
+    {
+      "text": "¿Deberían las ciudades apagar parte del alumbrado público de madrugada?",
+      "category": "Energía"
+    },
+    {
+      "text": "¿Es mejor el café de cafetera italiana que el de cápsulas?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los partidos de Primera División ser gratis en televisión abierta?",
+      "category": "Deporte"
+    },
+    {
+      "text": "¿Te gustaría que volvieran los videoclubes?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Es razonable pagar más de mil euros por un teléfono móvil?",
+      "category": "Tecnología"
+    },
+    {
+      "text": "¿Deberían los alquileres de temporada tener los mismos límites que los de larga duración?",
+      "category": "Vivienda"
+    },
+    {
+      "text": "¿Es mejor vivir de alquiler que comprar una casa?",
+      "category": "Vivienda"
+    },
+    {
+      "text": "¿Deberían los colegios tener huertos escolares?",
+      "category": "Educación"
+    },
+    {
+      "text": "¿Te parece bien que se pongan peajes para entrar en coche al centro de las ciudades?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es el gazpacho una bebida más que una sopa?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Debería haber un día al mes sin coches en todas las ciudades?",
+      "category": "Medio ambiente"
+    },
+    {
+      "text": "¿Deberían los supermercados donar toda la comida que no vendan?",
+      "category": "Sociedad"
+    },
+    {
+      "text": "¿Es mejor celebrar la Nochevieja en casa que salir de fiesta?",
+      "category": "Tradiciones"
+    },
+    {
+      "text": "¿Deberían los vuelos cortos pagar un impuesto por contaminar?",
+      "category": "Medio ambiente"
+    },
+    {
+      "text": "¿Te parece bien que los hoteles cobren una tasa turística por noche?",
+      "category": "Turismo"
+    },
+    {
+      "text": "¿Debería ampliarse el permiso por nacimiento a seis meses para cada progenitor?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Es el móvil el mayor ladrón de tiempo de nuestra vida?",
+      "category": "Tecnología"
+    },
+    {
+      "text": "¿Deberían los parques infantiles estar abiertos también por la noche en verano?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es mejor leer en papel que en pantalla?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Debería prohibirse la publicidad de comida rápida dirigida a niños?",
+      "category": "Salud"
+    },
+    {
+      "text": "¿Te gustaría que hubiera una hora del día sin notificaciones en el móvil?",
+      "category": "Tecnología"
+    },
+    {
+      "text": "¿Deberían las tiendas cerrar a las ocho de la tarde para conciliar?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Es la paella un plato para comer y no para cenar?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los estudiantes evaluar a sus profesores cada curso?",
+      "category": "Educación"
+    },
+    {
+      "text": "¿Te parece bien que se cobre por las bolsas de papel en las tiendas?",
+      "category": "Medio ambiente"
+    },
+    {
+      "text": "¿Es el verano demasiado caluroso para seguir con los horarios de siempre?",
+      "category": "Vida"
+    },
+    {
+      "text": "¿Deberían las playas prohibir fumar en toda la arena?",
+      "category": "Salud"
+    },
+    {
+      "text": "¿Es mejor el cine en sala que en casa?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Debería haber más trenes nocturnos entre ciudades españolas?",
+      "category": "Transporte"
+    },
+    {
+      "text": "¿Te parece bien que los gimnasios abran las veinticuatro horas?",
+      "category": "Vida"
+    },
+    {
+      "text": "¿Deberían los ayuntamientos poner sombra en todas las plazas?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es la puntualidad una asignatura pendiente en España?",
+      "category": "Sociedad"
+    },
+    {
+      "text": "¿Deberían los menús infantiles incluir siempre fruta de postre?",
+      "category": "Salud"
+    },
+    {
+      "text": "¿Pagarías por una red social sin publicidad?",
+      "category": "Tecnología"
+    },
+    {
+      "text": "¿Es mejor ir de vacaciones en septiembre que en agosto?",
+      "category": "Turismo"
+    },
+    {
+      "text": "¿Deberían las autoescuelas enseñar a conducir coches eléctricos?",
+      "category": "Transporte"
+    },
+    {
+      "text": "¿Te parece bien que las bodas duren todo el día?",
+      "category": "Tradiciones"
+    },
+    {
+      "text": "¿Debería ser gratis la entrada a los monumentos para los vecinos de cada ciudad?",
+      "category": "Turismo"
+    },
+    {
+      "text": "¿Es la radio el medio de comunicación más fiable?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Deberían los teléfonos venir con la batería fácil de cambiar?",
+      "category": "Tecnología"
+    },
+    {
+      "text": "¿Te gustaría poder votar en tu ayuntamiento qué obras se hacen en tu barrio?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es el aceite de oliva demasiado caro para el uso diario?",
+      "category": "Economía"
+    },
+    {
+      "text": "¿Deberían las universidades dar clases solo por la mañana?",
+      "category": "Educación"
+    },
+    {
+      "text": "¿Es mejor una ciudad con metro que una ciudad con tranvía?",
+      "category": "Transporte"
+    },
+    {
+      "text": "¿Deberían las terrazas de los bares retirarse a medianoche?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Te parece bien que se pida propina en el datáfono?",
+      "category": "Vida"
+    },
+    {
+      "text": "¿Debería existir un bono cultural para todas las edades?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Es mejor el puré de verduras que la ensalada para cenar?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los pisos nuevos incluir siempre placas solares?",
+      "category": "Energía"
+    },
+    {
+      "text": "¿Te gustaría tener una semana laboral de cuatro días aunque cobraras algo menos?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Es necesario hablar inglés para encontrar un buen trabajo en España?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Deberían los abuelos tener un permiso laboral para cuidar de los nietos?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Es el churro mejor con chocolate que solo?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los equipos de fútbol bajar el precio de las entradas para los jóvenes?",
+      "category": "Deporte"
+    },
+    {
+      "text": "¿Te parece bien que los niños usen tableta en clase?",
+      "category": "Educación"
+    },
+    {
+      "text": "¿Debería haber zonas de silencio en los vagones de tren?",
+      "category": "Transporte"
+    },
+    {
+      "text": "¿Es mejor jubilarse poco a poco trabajando menos horas?",
+      "category": "Trabajo"
+    },
+    {
+      "text": "¿Deberían los productos indicar cuántos años de reparación garantizan?",
+      "category": "Economía"
+    },
+    {
+      "text": "¿Te gustaría que tu ciudad tuviera más árboles aunque hubiera menos aparcamiento?",
+      "category": "Medio ambiente"
+    },
+    {
+      "text": "¿Es la sobremesa la mejor parte de las comidas en familia?",
+      "category": "Tradiciones"
+    },
+    {
+      "text": "¿Deberían los conciertos y festivales terminar antes de las dos de la madrugada?",
+      "category": "Cultura"
+    },
+    {
+      "text": "¿Debería prohibirse el uso del móvil mientras se cruza un paso de peatones?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es el queso con membrillo el mejor postre?",
+      "category": "Gastronomía"
+    },
+    {
+      "text": "¿Deberían los niños ir solos al colegio a partir de los diez años?",
+      "category": "Vida"
+    },
+    {
+      "text": "¿Te parece bien que las aerolíneas cobren por la maleta de mano?",
+      "category": "Turismo"
+    },
+    {
+      "text": "¿Es mejor el mar Mediterráneo que el Cantábrico para bañarse?",
+      "category": "Turismo"
+    },
+    {
+      "text": "¿Deberían las calles comerciales ser solo peatonales los fines de semana?",
+      "category": "Ciudad"
+    },
+    {
+      "text": "¿Es la hora de la cena en España demasiado tardía para los niños?",
+      "category": "Vida"
+    },
+    {
+      "text": "¿Deberían los ordenadores de las escuelas usar solo programas libres?",
+      "category": "Tecnología"
     }
   ]
 }
