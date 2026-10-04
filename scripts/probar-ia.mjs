@@ -30,7 +30,7 @@ const AI = {
 };
 
 const log = { warn: (m) => console.log(`  · ${m}`) };
-const recent = banco.map((q) => q.text);
+const recent = [...banco];
 let ok = 0;
 const rondas = Number(process.env.RONDAS ?? 3);
 console.log(`Modelo: ${model}\n`);
@@ -38,7 +38,7 @@ for (let i = 1; i <= rondas; i++) {
   const q = await generateWithAI({ AI, AI_MODEL: model }, recent, { attempts: 3, log });
   if (q) {
     ok++;
-    recent.unshift(q.text);
+    recent.unshift(q);
     console.log(`✔ ${i}. [${q.category}] ${q.text}`);
   } else {
     console.log(`✘ ${i}. Ninguna propuesta pasó los filtros en 3 intentos.`);

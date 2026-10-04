@@ -12,6 +12,19 @@ const A = '11111111-1111-4111-8111-111111111111';
 const B = '22222222-2222-4222-8222-222222222222';
 const quiet = { warn() {} };
 
+/** IA simulada: `propose` responde a la petición de pregunta y `revise` a la revisión de estilo. */
+function fakeAI(propose, revise = (q) => ({ aprobada: true, text: q.text })) {
+  return {
+    async run(_model, input) {
+      if (input.messages[0].content.startsWith('Eres corrector')) {
+        const text = input.messages[1].content.match(/^Pregunta: (.*)$/m)[1];
+        return { response: revise({ text }) };
+      }
+      return { response: propose() };
+    },
+  };
+}
+
 let env;
 beforeEach(() => {
   env = { DB: createD1(), HASH_SECRET: 'test', ALLOWED_ORIGINS: `${ORIGIN},http://localhost:5173`, MAX_VOTES_PER_IP: '3' };
@@ -178,7 +191,7 @@ describe('preguntas', () => {
       insert.run(d, i + 1, q.text, q.category, 'banco', 0);
     });
 
-    env.AI = { run: async () => ({ response: { text: '¿Te gusta desayunar churros los domingos por la mañana?', category: 'Gastronomía' } }) };
+    env.AI = fakeAI(() => ({ text: '¿Te gusta desayunar churros los domingos por la mañana?', category: 'Gastronomía' }));
     const ai = await chooseQuestion(env, '2030-01-01', { allowAI: true, log: quiet });
     assert.equal(ai.source, 'ia');
 
@@ -200,11 +213,19 @@ describe('preguntas', () => {
       '{"text": "¿Deberían los museos abrir gratis el primer domingo de cada mes?", "category": "Cultura"}',
     ];
     let i = 0;
-    const fakeEnv = { AI: { run: async () => ({ response: replies[i++] }) } };
+    const fakeEnv = { AI: fakeAI(() => replies[i++]) };
     assert.equal(await generateWithAI(fakeEnv, [], { attempts: 3, log: quiet }), null);
     i = 3;
     const q = await generateWithAI(fakeEnv, [], { attempts: 1, log: quiet });
     assert.equal(q.text, '¿Deberían los museos abrir gratis el primer domingo de cada mes?');
+  });
+
+  test('la revisión de estilo corrige o descarta lo que propone la IA', async () => {
+    const draft = { text: '¿Prefieres la tapas gratuitas con la consumición?', category: 'Gastronomía' };
+    const corrige = { AI: fakeAI(() => draft, () => ({ aprobada: true, text: '¿Prefieres las tapas gratis con la consumición?' })) };
+    assert.equal((await generateWithAI(corrige, [], { attempts: 1, log: quiet })).text, '¿Prefieres las tapas gratis con la consumición?');
+    const rechaza = { AI: fakeAI(() => draft, () => ({ aprobada: false, text: '', motivo: 'confusa' })) };
+    assert.equal(await generateWithAI(rechaza, [], { attempts: 2, log: quiet }), null);
   });
 
   test('validación de preguntas', () => {

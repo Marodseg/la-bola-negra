@@ -24,14 +24,14 @@ export async function getQuestion(db, day) {
 export async function chooseQuestion(env, day, { allowAI = false, log = console } = {}) {
   if (EDITORIAL[day]) return { ...EDITORIAL[day], source: 'editorial' };
 
-  const { results: used } = await env.DB.prepare('SELECT day, text FROM questions ORDER BY day DESC').all();
+  const { results: used } = await env.DB.prepare('SELECT day, text, category FROM questions ORDER BY day DESC').all();
   const usedSet = new Set(used.map((q) => normalize(q.text)));
   const fresh = BANK.find((q) => !usedSet.has(normalize(q.text)));
   const preferAI = String(env.PREFER_AI) === 'true';
 
   if (fresh && !(allowAI && preferAI)) return { ...fresh, source: 'banco' };
   if (allowAI) {
-    const generated = await generateWithAI(env, used.map((q) => q.text), { log });
+    const generated = await generateWithAI(env, used, { log });
     if (generated) return { ...generated, source: 'ia' };
   }
   if (fresh) return { ...fresh, source: 'banco' };
