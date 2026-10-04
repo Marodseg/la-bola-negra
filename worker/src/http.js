@@ -17,7 +17,7 @@ export function corsHeaders(request, env) {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, X-Votante',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Votante, X-Huella',
     'Access-Control-Max-Age': '86400',
     Vary: 'Origin',
   };

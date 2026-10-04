@@ -13,14 +13,28 @@ async function voterKey(request, env) {
 }
 
 const clientIp = (request) => request.headers.get('CF-Connecting-IP') ?? '0.0.0.0';
+const HUELLA_RE = /^[0-9a-f]{64}$/;
+
+/**
+ * Huella del dispositivo en esta conexión y este día. Sobrevive al modo incógnito y a borrar
+ * los datos del navegador; al mezclarse con la IP y la fecha no sirve para seguir a nadie.
+ */
+async function deviceKey(request, env, day) {
+  const huella = request.headers.get('X-Huella');
+  if (!huella || !HUELLA_RE.test(huella)) return null;
+  return hmac(env.HASH_SECRET, `dispositivo:${day}:${clientIp(request)}:${huella}`);
+}
 
 const routes = {
   'GET /api/salud': async () => json({ ok: true }),
 
   'GET /api/hoy': async (request, env, now) => {
     const day = madridDay(now);
-    const [question, voter] = await Promise.all([ensureQuestion(env, day), voterKey(request, env)]);
-    const [results, myBall] = await Promise.all([tally(env.DB, day), voter ? findVote(env.DB, day, voter) : null]);
+    const [question, voter, device] = await Promise.all([ensureQuestion(env, day), voterKey(request, env), deviceKey(request, env, day)]);
+    const [results, myBall] = await Promise.all([
+      tally(env.DB, day),
+      voter || device ? findVote(env.DB, day, voter, device) : null,
+    ]);
     return json({
       question,
       myBall,
@@ -44,14 +58,16 @@ const routes = {
     if (!voter) return error(400, 'Falta el identificador del votante.');
 
     const day = madridDay(now);
+    const device = await deviceKey(request, env, day);
+    if (!device) return error(400, 'Falta la huella del dispositivo.');
     // Si alguien deja la página abierta a medianoche, su voto no cae en la pregunta siguiente.
     if (body.day !== undefined && (!isDay(body.day) || body.day !== day)) {
       return error(409, 'Esta votación ya se ha cerrado. Recarga para ver la pregunta de hoy.', { closed: true });
     }
     await ensureQuestion(env, day);
 
-    const previous = await findVote(env.DB, day, voter);
-    if (previous) return error(409, 'Ya has echado tu bola hoy.', { myBall: previous, results: await tally(env.DB, day) });
+    const previous = await findVote(env.DB, day, voter, device);
+    if (previous) return error(409, 'Ya se ha votado hoy desde este dispositivo.', { myBall: previous, results: await tally(env.DB, day) });
 
     const ip = clientIp(request);
     if (!(await verifyTurnstile(env, body.turnstileToken, ip))) {
@@ -64,9 +80,9 @@ const routes = {
       return error(429, 'Ya se han echado demasiadas bolas desde esta conexión hoy.');
     }
 
-    if (!(await castVote(env.DB, { day, voter, ipHash, ball: body.ball }))) {
-      const existing = await findVote(env.DB, day, voter);
-      return error(409, 'Ya has echado tu bola hoy.', { myBall: existing, results: await tally(env.DB, day) });
+    if (!(await castVote(env.DB, { day, voter, deviceKey: device, ipHash, ball: body.ball }))) {
+      const existing = await findVote(env.DB, day, voter, device);
+      return error(409, 'Ya se ha votado hoy desde este dispositivo.', { myBall: existing, results: await tally(env.DB, day) });
     }
     return json({ myBall: body.ball, results: await tally(env.DB, day) }, { status: 201 });
   },

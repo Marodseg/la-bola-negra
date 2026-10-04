@@ -8,7 +8,12 @@ pestaña **Security → Report a vulnerability** de este repositorio. Intentaré
 ## Medidas aplicadas
 
 - **Sin datos personales.** No hay cuentas ni cookies. El identificador del navegador y la IP solo se guardan como HMAC-SHA256 con un secreto del servidor; la huella de la IP incluye la fecha, así que cambia cada día.
-- **Un voto por persona y día.** Clave primaria `(día, votante)` en la base de datos, tope de votos por conexión y día, y [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) opcional contra bots.
+- **Un voto por persona y día.** Tres barreras en la base de datos:
+  1. Clave única `(día, votante)`: el identificador aleatorio del navegador. Frena las pestañas repetidas.
+  2. Clave única `(día, dispositivo)`: HMAC de la fecha, la IP y una huella técnica del navegador (navegador, pantalla, idioma, zona horaria y gráfica). Frena el modo incógnito y el borrado de datos en el mismo dispositivo y la misma red.
+  3. Tope de votos por conexión y día (5 por defecto).
+
+  Además, [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/) frena a los programas automáticos.
 - **CORS y origen.** La API solo responde con cabeceras CORS a los orígenes de `ALLOWED_ORIGINS` y rechaza votos que no vengan de ellos.
 - **Entradas validadas.** Cuerpos JSON de 2 KB como máximo, valores cerrados (`blanca` / `negra`), fechas y UUID comprobados, consultas SQL siempre parametrizadas.
 - **Cabeceras.** La API envía `Content-Security-Policy`, `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Strict-Transport-Security`. La web lleva una CSP estricta (sin scripts ni estilos en línea, sin terceros salvo Turnstile).
@@ -20,4 +25,4 @@ pestaña **Security → Report a vulnerability** de este repositorio. Intentaré
 
 ## Límites conocidos
 
-Sin registro no existe una forma perfecta de impedir el voto múltiple: alguien con varios navegadores y varias conexiones podría votar más de una vez. El tope por conexión y Turnstile lo hacen caro, pero no imposible. Por eso la web avisa de que no es una encuesta científica.
+Sin registro no existe una forma perfecta de impedir el voto múltiple: alguien que cambie de navegador o de red (de la wifi a los datos del móvil, por ejemplo) puede votar alguna vez más. Las barreras anteriores lo hacen incómodo y limitado, pero no imposible. Al revés, dos dispositivos idénticos (mismo modelo, sistema e idioma) en la misma wifi cuentan como uno, y solo vota el primero. Por eso la web avisa de que no es una encuesta científica.

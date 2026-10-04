@@ -46,9 +46,10 @@
     </header>
 
     <h2>Qué se guarda al votar</h2>
-    <p>Solo lo imprescindible: el día, el color de la bola y dos huellas criptográficas que no se pueden revertir.</p>
+    <p>Solo lo imprescindible: el día, el color de la bola y tres huellas criptográficas que no se pueden revertir.</p>
     <ul>
       <li><strong>Huella del navegador.</strong> Su navegador genera un identificador aleatorio que se guarda en su propio dispositivo (<code>localStorage</code>). Al servidor solo llega para comprobar que no ha votado ya, y en la base de datos se guarda su huella HMAC, nunca el identificador.</li>
+      <li><strong>Huella del dispositivo.</strong> Para que no se pueda votar otra vez abriendo una ventana de incógnito o borrando los datos del navegador, la web calcula un resumen de rasgos técnicos que no cambian (tipo de navegador, tamaño de pantalla, idioma, zona horaria y tarjeta gráfica). Ese resumen se mezcla en el servidor con la conexión y la fecha y solo se guarda su HMAC: no permite saber qué dispositivo es ni reconocerlo otro día.</li>
       <li><strong>Huella de la conexión.</strong> Para limitar a cinco los votos por conexión y día, se guarda una huella HMAC de la IP mezclada con la fecha. Cambia cada día, así que no permite seguir a nadie de un día para otro. La IP en sí no se guarda.</li>
     </ul>
 
@@ -60,6 +61,7 @@
     </ul>
 
     <h2>Protección contra abusos</h2>
+    <p>Estas huellas se usan con un único fin: que cada persona vote una sola vez al día (interés legítimo en la integridad de la votación). No se comparten con nadie ni se usan para publicidad o estadísticas.</p>
     <p>Si está activada, la votación usa <a href="https://www.cloudflare.com/es-es/products/turnstile/" rel="noopener">Cloudflare Turnstile</a> para comprobar que quien vota no es un programa automático. Turnstile no usa cookies de seguimiento ni rompecabezas de imágenes. La web y la API se sirven a través de GitHub Pages y Cloudflare, que como cualquier servidor reciben su IP para poder entregarle la página.</p>
 
     <h2>Resultados públicos</h2>

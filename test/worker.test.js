@@ -20,10 +20,14 @@ beforeEach(() => {
 const at = (iso) => new Date(iso);
 const NOW = at('2026-10-04T10:00:00Z');
 
-function call(method, path, { body, voter, ip = '1.1.1.1', origin = ORIGIN, now = NOW } = {}) {
+const HUELLA = 'a'.repeat(64);
+const huellaDe = (c) => c.repeat(64);
+
+function call(method, path, { body, voter, ip = '1.1.1.1', huella = HUELLA, origin = ORIGIN, now = NOW } = {}) {
   const headers = { 'CF-Connecting-IP': ip };
   if (origin) headers.Origin = origin;
   if (voter) headers['X-Votante'] = voter;
+  if (huella) headers['X-Huella'] = huella;
   if (body) headers['Content-Type'] = 'application/json';
   const req = new Request(`https://api.test${path}`, { method, headers, body: body && JSON.stringify(body) });
   return handle(req, env, now).then(async (res) => ({ res, status: res.status, data: res.headers.get('content-type')?.includes('json') ? await res.json() : await res.text() }));
@@ -50,7 +54,7 @@ describe('votación', () => {
     assert.equal(r.data.myBall, 'negra');
     assert.equal(r.data.results.total, 1);
 
-    r = await call('GET', '/api/hoy', { voter: B });
+    r = await call('GET', '/api/hoy', { voter: B, huella: huellaDe('b') });
     assert.equal(r.data.results, null);
     assert.equal(r.data.totalVotes, 1);
   });
@@ -59,18 +63,46 @@ describe('votación', () => {
     assert.equal((await call('POST', '/api/votar', { voter: A, body: { ball: 'gris' } })).status, 400);
     assert.equal((await call('POST', '/api/votar', { body: { ball: 'blanca' } })).status, 400);
     assert.equal((await call('POST', '/api/votar', { voter: 'no-es-un-uuid', body: { ball: 'blanca' } })).status, 400);
+    assert.equal((await call('POST', '/api/votar', { voter: A, huella: null, body: { ball: 'blanca' } })).status, 400);
+    assert.equal((await call('POST', '/api/votar', { voter: A, huella: 'corta', body: { ball: 'blanca' } })).status, 400);
     assert.equal((await call('POST', '/api/votar', { voter: A, origin: 'https://malo.example', body: { ball: 'blanca' } })).status, 403);
     assert.equal((await call('POST', '/api/votar', { voter: A, origin: null, body: { ball: 'blanca' } })).status, 403);
     assert.equal((await call('POST', '/api/votar', { voter: A, body: { ball: 'blanca', day: '2026-10-03' } })).status, 409);
   });
 
   test('limita los votos por conexión y día', async () => {
+    // Cuatro dispositivos distintos en la misma casa
     const ids = ['a', 'b', 'c', 'd'].map((c) => `${c.repeat(8)}-aaaa-4aaa-8aaa-${'a'.repeat(12)}`);
     const statuses = [];
-    for (const id of ids) statuses.push((await call('POST', '/api/votar', { voter: id, body: { ball: 'blanca' } })).status);
+    for (const [i, id] of ids.entries()) {
+      statuses.push((await call('POST', '/api/votar', { voter: id, huella: huellaDe('abcd'[i]), body: { ball: 'blanca' } })).status);
+    }
     assert.deepEqual(statuses, [201, 201, 201, 429]);
     // Otra conexión sí puede
-    assert.equal((await call('POST', '/api/votar', { voter: ids[3], ip: '2.2.2.2', body: { ball: 'blanca' } })).status, 201);
+    assert.equal((await call('POST', '/api/votar', { voter: ids[3], huella: huellaDe('d'), ip: '2.2.2.2', body: { ball: 'blanca' } })).status, 201);
+  });
+
+  test('incógnito o datos borrados: el mismo dispositivo en la misma red no vuelve a votar', async () => {
+    assert.equal((await call('POST', '/api/votar', { voter: A, body: { ball: 'negra' } })).status, 201);
+    // Mismo móvil, misma wifi, identificador nuevo (ventana de incógnito)
+    const r = await call('POST', '/api/votar', { voter: B, body: { ball: 'blanca' } });
+    assert.equal(r.status, 409);
+    assert.equal(r.data.myBall, 'negra');
+    // Al volver a entrar en incógnito ve su voto y el recuento
+    const hoy = await call('GET', '/api/hoy', { voter: B });
+    assert.equal(hoy.data.myBall, 'negra');
+    assert.equal(hoy.data.results.total, 1);
+    // Otro dispositivo en la misma casa sí vota
+    assert.equal((await call('POST', '/api/votar', { voter: B, huella: huellaDe('c'), body: { ball: 'blanca' } })).status, 201);
+  });
+
+  test('la huella del dispositivo no se guarda en claro y cambia cada día', async () => {
+    await call('POST', '/api/votar', { voter: A, body: { ball: 'blanca' } });
+    await call('POST', '/api/votar', { voter: A, now: at('2026-10-05T10:00:00Z'), body: { ball: 'blanca' } });
+    const rows = env.DB.raw.prepare('SELECT device_key FROM votes ORDER BY day').all();
+    assert.equal(rows.length, 2);
+    assert.ok(rows.every((r) => !r.device_key.includes('aaaa')));
+    assert.notEqual(rows[0].device_key, rows[1].device_key);
   });
 
   test('exige Turnstile cuando está configurado', async () => {
@@ -97,6 +129,7 @@ describe('votación', () => {
     const ok = await call('OPTIONS', '/api/votar');
     assert.equal(ok.status, 204);
     assert.equal(ok.res.headers.get('access-control-allow-origin'), ORIGIN);
+    assert.match(ok.res.headers.get('access-control-allow-headers'), /X-Huella/);
     const bad = await call('GET', '/api/hoy', { origin: 'https://malo.example' });
     assert.equal(bad.res.headers.get('access-control-allow-origin'), null);
   });

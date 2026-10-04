@@ -1,3 +1,4 @@
+import { deviceFingerprint } from './huella.js';
 import { store } from './store.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -28,6 +29,7 @@ export const voterId = (() => {
 })();
 
 export async function api(path, { method = 'GET', body, timeout = 12000 } = {}) {
+  const huella = await deviceFingerprint();
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), timeout);
   try {
@@ -36,7 +38,11 @@ export async function api(path, { method = 'GET', body, timeout = 12000 } = {}) 
       mode: 'cors',
       credentials: 'omit',
       signal: ctrl.signal,
-      headers: { 'X-Votante': voterId, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+      headers: {
+        'X-Votante': voterId,
+        ...(huella ? { 'X-Huella': huella } : {}),
+        ...(body ? { 'Content-Type': 'application/json' } : {}),
+      },
       body: body ? JSON.stringify(body) : undefined,
     });
     const data = await res.json().catch(() => ({}));

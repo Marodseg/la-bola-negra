@@ -54,7 +54,7 @@ El banco y las fechas fijas están en [`worker/src/questions/banco.json`](worker
 ## Seguridad y privacidad
 
 - **Sin cookies ni datos personales.** El navegador genera un identificador aleatorio y el servidor solo guarda su HMAC. La IP se guarda como HMAC junto con la fecha, así que cambia cada día. Más detalle en el [aviso de privacidad](https://marodseg.github.io/la-bola-negra/privacidad.html).
-- **Un voto por persona y día**, garantizado por la base de datos, con un tope de 5 votos por conexión y día y [Turnstile](https://developers.cloudflare.com/turnstile/) opcional contra bots.
+- **Un voto por persona y día.** La base de datos lo impone por navegador y también por dispositivo y red, así que abrir una ventana de incógnito o borrar los datos no sirve para votar otra vez. Hay además un tope de 5 votos por conexión y día y [Turnstile](https://developers.cloudflare.com/turnstile/) contra bots.
 - **CORS restringido**, validación estricta de entradas, consultas parametrizadas, CSP estricta en la web (sin terceros: las tipografías se sirven desde la propia web) y cabeceras de seguridad en la API.
 - Más detalle en [SECURITY.md](SECURITY.md).
 
@@ -91,7 +91,7 @@ Paso a paso en **[docs/despliegue.md](docs/despliegue.md)**. En resumen: añadir
 | `GET /api/historico.json` · `GET /api/historico.csv` | Todo el histórico |
 | `GET /api/salud` | Comprobación de estado |
 
-Las peticiones llevan la cabecera `X-Votante` con el identificador aleatorio del navegador.
+Las peticiones llevan la cabecera `X-Votante` con el identificador aleatorio del navegador y `X-Huella` con el resumen SHA-256 de rasgos técnicos del dispositivo.
 
 ## Estructura
 
